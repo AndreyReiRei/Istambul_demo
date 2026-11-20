@@ -2,8 +2,8 @@
    MAIN.CSS
    ----------------------------------------------------------------------------
    Стили страницы в потоке документа:
-     • контейнер и типографика
-     • карточки-блоки (.content-block) с бликами
+     • контейнер и типографика (градиентный h1, текст на тёмном фоне)
+     • карточки-блоки (.content-block) — стеклянные панели с бликами
      • обтекание текста вокруг главного фото дня
      • галерея-скролл с миниатюрами (адаптив под 4 брейкпоинта)
      • кнопки навигации галереи (скрыты на мобильных)
@@ -38,37 +38,72 @@
    ---------------------------------------------------------------------------- */
 
 /* H1 — главный заголовок «Стамбул».
-   Голубой цвет + многослойное тёплое свечение (жёлто-оранжевое),
-   контрастирует с холодным фоном.
-   Появляется снизу через fadeInUp с задержкой 0.3s. */
+   Градиентный текст: фон-градиент обрезается по контуру букв.
+
+   Важно для обрезки:
+     • line-height: 1.25 — даёт воздух сверху/снизу, курсив Playfair
+       не срезается;
+     • padding сверху/снизу 0.1em — запас для drop-shadow;
+     • padding по бокам 0.05em — курсивная последняя буква не вылезает;
+     • letter-spacing убран — курсив сам по себе широкий.
+
+   Градиент: холодный голубой → белый → тёплый золотой.
+   Контрастен и тёплому верху фона, и холодному низу. */
 h1 {
 	text-align: center;
 	font-style: italic;
-	color: var(--color-heading);
-	text-shadow:
-		0 0 8px rgba(255, 223, 0, 0.6),
-		0 0 18px rgba(255, 195, 0, 0.4),
-		0 0 28px rgba(255, 140, 0, 0.3),
-		0 0 38px rgba(255, 69, 0, 0.2),
-		2px 2px 3px rgba(47, 50, 71, 0.4);
+
+	/* Градиент: голубой → белый → золотой */
+	background: linear-gradient(135deg,
+			#4dd0ff 0%,
+			#a8e6ff 20%,
+			#ffffff 45%,
+			#ffe9a8 70%,
+			#ffb84d 100%);
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	color: transparent;
+	/* fallback */
+
+	/* Свечение: drop-shadow обводит контур градиента.
+	   text-shadow не работает с прозрачным текстом. */
+	filter:
+		drop-shadow(0 0 10px rgba(77, 208, 255, 0.5)) drop-shadow(0 0 24px rgba(255, 184, 77, 0.3)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+
 	margin-bottom: 20px;
 
 	/* Анимация появления */
 	opacity: 0;
 	animation: fadeInUp 1s ease 0.3s forwards;
 
-	line-height: 1.1;
-	padding: 0 20px;
-	font-size: clamp(2rem, 6vw, 5rem);
-	font-weight: 600;
+	/* Ключевое: line-height даёт воздух, padding — запас для тени */
+	line-height: 1.25;
+	padding: 0.1em 0.05em;
+
+	/* Размер: 2.5rem на мобильных → 7rem на десктопе */
+	font-size: clamp(2.5rem, 9vw, 7rem);
+	font-weight: 700;
 }
 
-/* H2 — заголовок дня внутри контент-блока. */
+/* Fallback: если background-clip: text не поддерживается —
+   показываем сплошной голубой, чтобы текст не был невидимым. */
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+	h1 {
+		color: var(--color-heading);
+		-webkit-text-fill-color: currentColor;
+		filter:
+			drop-shadow(0 0 8px rgba(255, 223, 0, 0.6)) drop-shadow(0 0 18px rgba(255, 195, 0, 0.4));
+	}
+}
+
+/* H2 — заголовок дня внутри контент-блока.
+   Голубой с лёгким свечением, чтобы читался на стеклянном фоне. */
 .text-content h2 {
 	color: var(--color-heading);
 	text-shadow:
-		0.5px 0.5px 2px #2f3247,
-		0 0 10px rgba(133, 227, 255, 0.2);
+		0 1px 2px rgba(0, 0, 0, 0.5),
+		0 0 12px rgba(133, 227, 255, 0.25);
 	margin-bottom: 20px;
 	font-style: italic;
 	line-height: 1.2;
@@ -78,8 +113,7 @@ h1 {
 }
 
 /* Абзацы лонгрида.
-   Двойная микро-тень (светлая сверху, тёмная снизу) даёт эффект
-   «выдавленного» текста на градиентном фоне. */
+   На тёмном фоне — светлый текст с тёмной подсветкой для контраста. */
 .text-content p {
 	margin-bottom: 16px;
 	color: var(--color-text);
@@ -87,42 +121,51 @@ h1 {
 	font-weight: 400;
 	line-height: 1.7;
 	letter-spacing: 0.02em;
-	text-shadow:
-		0.2px 0.2px 0.5px var(--color-text-shadow),
-		-0.2px -0.2px 0.5px rgba(0, 16, 88, 0.08);
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 	padding: 0 15px;
 	font-size: clamp(0.95rem, 2.5vw, 1.4rem);
 	text-indent: 1.5rem;
-	/* фиксированный, т.к. clamp с % в text-indent не работает */
 }
 
 
 /* ----------------------------------------------------------------------------
    3. КОНТЕНТ-БЛОК (КАРТОЧКА ДНЯ)
    ----------------------------------------------------------------------------
+   Стеклянная панель: полупрозрачный фон + backdrop-filter: blur().
+   Сквозь карточку виден фон страницы (закат/море) и фоновые частицы.
+
    Слои внутри карточки (снизу вверх):
      • ::before  — диагональный блик (z-index: 0)
      • ::after   — горизонтальный блик (z-index: 0)
      • .text-content — контент (z-index: 1) — поверх бликов
    ---------------------------------------------------------------------------- */
 .content-block {
-	background: linear-gradient(-20deg,
-			rgba(155, 200, 215, 0.9),
-			rgba(175, 215, 228, 0.95),
-			rgba(190, 225, 235, 0.98),
-			rgba(205, 230, 238, 0.94),
-			rgba(215, 235, 242, 0.88));
+	/* Полупрозрачное стекло с голубым оттенком.
+	   Верх — темнее (ночь), низ — светлее (день). */
+	background: linear-gradient(180deg,
+			rgba(15, 30, 60, 0.35) 0%,
+			rgba(30, 70, 110, 0.25) 50%,
+			rgba(60, 120, 160, 0.2) 100%);
+
+	/* Матовое стекло: blur + насыщенность */
+	backdrop-filter: blur(20px) saturate(140%);
+	-webkit-backdrop-filter: blur(20px) saturate(140%);
 
 	position: relative;
 	border-radius: var(--radius-lg);
-	/* overflow: hidden обрезает блики по скруглению.
-	   Тень .image-content у края может обрезаться — это компромисс:
-	   без overflow блики вылезут за карточку. */
 	overflow: hidden;
 	margin-bottom: 40px;
-	box-shadow: var(--shadow-card);
 
-	/* Стартовое состояние для scroll-анимации (ставит scroll-anim.js) */
+	/* Тень + светлая обводка «по краю стекла» */
+	box-shadow:
+		0 8px 32px rgba(0, 0, 0, 0.35),
+		0 2px 8px rgba(0, 0, 0, 0.2),
+		inset 0 1px 0 rgba(255, 255, 255, 0.2),
+		inset 0 -1px 0 rgba(255, 255, 255, 0.06),
+		inset 0 0 60px rgba(107, 220, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+
+	/* Стартовое состояние для scroll-анимации */
 	opacity: 0;
 	transform: translateY(50px);
 	transition: opacity 0.8s ease, transform 0.8s ease;
@@ -257,20 +300,19 @@ h1 {
 }
 
 /* Главное фото дня: прижато вправо, ширина до 45vw или 550px.
-   Полупрозрачная «стеклянная» подложка + внутренняя подсветка. */
+   На стеклянном фоне — полупрозрачная «стеклянная» подложка. */
 .image-content {
 	float: right;
 	width: min(45vw, 550px);
 	margin: 0 0 20px 40px;
 	background: rgba(255, 255, 255, 0.06);
 	border-radius: var(--radius-md);
-	border: 1px solid rgba(255, 255, 255, 0.08);
+	border: 1px solid rgba(255, 255, 255, 0.12);
 	box-shadow:
-		0 12px 40px rgba(50, 110, 140, 0.22),
-		0 6px 20px rgba(70, 130, 160, 0.15),
-		0 3px 10px rgba(90, 150, 180, 0.1),
-		inset 0 1px 0 rgba(255, 255, 255, 0.2),
-		inset 0 0 40px rgba(255, 255, 255, 0.1);
+		0 12px 40px rgba(0, 0, 0, 0.3),
+		0 6px 20px rgba(0, 0, 0, 0.2),
+		inset 0 1px 0 rgba(255, 255, 255, 0.15),
+		inset 0 0 40px rgba(255, 255, 255, 0.05);
 }
 
 .image-content img {
@@ -287,26 +329,34 @@ h1 {
    ----------------------------------------------------------------------------
    Горизонтальная лента миниатюр.
 
+   Стиль приведён к новой системе:
+     • фон — полупрозрачное «стекло» вместо сплошного голубого;
+     • карточки — с мягкой тенью и светлой обводкой;
+     • hover — только на устройствах с реальным hover.
+
    Брейкпоинты по ширине миниатюры:
      • ≥ 1200px  — 320px (4–5 карточек в ряд)
      • 900–1199  — 280px (3–4 карточки)
      • 600–899   — 240px (2–3 карточки)
      • < 600     — 76vw  (одна карточка + «подглядывание» следующей)
-
-   «Подглядывание» (peek) — приём мобильных каруселей: пользователь видит,
-   что справа есть ещё фото, и интуитивно свайпает.
    ---------------------------------------------------------------------------- */
 .media-gallery {
 	position: relative;
 	width: 100%;
 	padding: 25px 20px;
-	background: var(--bg-gallery);
+
+	/* Стеклянная подложка вместо сплошного голубого.
+	   Прозрачность 0.06 — сквозь неё виден фон страницы (закат/море). */
+	background: rgba(255, 255, 255, 0.06);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border-top: 1px solid rgba(255, 255, 255, 0.08);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Лента: flex + горизонтальный скролл.
    scroll-snap — привязка к карточкам после скролла.
-   touch-action: pan-y — разрешает вертикальный скролл страницы,
-   горизонтальный жест обрабатывает сам контейнер (нет «дёрганья» на Android). */
+   touch-action: auto — разрешает горизонтальный жест (свайп). */
 .gallery-container {
 	display: flex;
 	overflow-x: auto;
@@ -315,10 +365,9 @@ h1 {
 	-ms-overflow-style: none;
 	padding: 15px 0;
 	gap: 20px;
-	touch-action: auto;
 	scroll-snap-type: x mandatory;
+	touch-action: auto;
 	-webkit-overflow-scrolling: touch;
-	/* fallback для старых iOS */
 }
 
 .gallery-container::-webkit-scrollbar {
@@ -326,8 +375,8 @@ h1 {
 }
 
 /* Одна миниатюра.
-   aspect-ratio: 4/3 — стандартные пропорции фото, стабильные до загрузки (нет CLS).
-   scroll-snap-align: start — карточка прилипает к левому краю при остановке. */
+   aspect-ratio: 4/3 — стандартные пропорции фото.
+   scroll-snap-align: start — карточка прилипает к левому краю. */
 .media-item {
 	flex: 0 0 auto;
 	width: 320px;
@@ -336,22 +385,27 @@ h1 {
 	overflow: hidden;
 	cursor: pointer;
 	transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+
+	/* Тень: мягкая, с лёгким голубым свечением — «парящая» карточка */
 	box-shadow:
-		0 3px 12px rgba(80, 130, 160, 0.12),
-		0 1px 4px rgba(100, 150, 180, 0.08);
-	border: 1px solid rgba(255, 255, 255, 0.2);
+		0 4px 16px rgba(0, 0, 0, 0.25),
+		0 1px 4px rgba(0, 0, 0, 0.15),
+		0 0 12px rgba(107, 220, 255, 0.08);
+
+	border: 1px solid rgba(255, 255, 255, 0.15);
 	scroll-snap-align: start;
 	-webkit-tap-highlight-color: transparent;
 }
 
-/* Hover — только на устройствах с реальным hover (не «залипает» на тач) */
+/* Hover — только на устройствах с реальным hover */
 @media (hover: hover) {
 	.media-item:hover {
-		transform: translateY(-5px) scale(1.05);
+		transform: translateY(-6px) scale(1.03);
 		box-shadow:
-			0 4px 12px rgba(80, 130, 160, 0.55),
-			0 2px 6px rgba(100, 150, 180, 0.6);
-		border-color: rgba(255, 255, 255, 0.5);
+			0 12px 32px rgba(0, 0, 0, 0.35),
+			0 4px 12px rgba(0, 0, 0, 0.2),
+			0 0 24px rgba(107, 220, 255, 0.25);
+		border-color: rgba(107, 220, 255, 0.5);
 	}
 }
 
@@ -367,7 +421,7 @@ h1 {
 
 	.media-item:hover img,
 	.media-item:hover video {
-		transform: scale(1.05);
+		transform: scale(1.06);
 	}
 }
 
@@ -403,12 +457,13 @@ h1 {
    7. КНОПКИ НАВИГАЦИИ ГАЛЕРЕИ (НЕ МОДАЛКИ)
    ----------------------------------------------------------------------------
    Круглые кнопки ‹ › поверх ленты.
-   Стиль: «стеклянная» кнопка с голубым акцентом при hover.
+
+   Стиль: тёмное «стекло» с голубым акцентом — сочетается с новым фоном.
    На мобильных СКРЫТЫ (свайп достаточно) — см. @media (max-width: 599px).
 
    Состояния:
-     • обычное        — полупрозрачный белый фон, лёгкая тень;
-     • hover          — голубая заливка, увеличение (только @media hover);
+     • обычное        — тёмный полупрозрачный фон, светлая иконка;
+     • hover          — голубая заливка, тёмная иконка (только @media hover);
      • .is-edge       — приглушены, когда листать некуда;
      • :focus-visible — обводка для клавиатуры.
    ---------------------------------------------------------------------------- */
@@ -420,13 +475,14 @@ h1 {
 	width: 48px;
 	height: 48px;
 	border-radius: 50%;
-	border: 1px solid rgba(255, 255, 255, 0.5);
+	border: 1px solid rgba(255, 255, 255, 0.25);
 
-	background: rgba(255, 255, 255, 0.85);
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
+	/* Тёмное стекло — читается на любом фоне */
+	background: rgba(15, 30, 50, 0.55);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
 
-	color: #1a365d;
+	color: #e8f4f8;
 	font-size: 22px;
 	font-weight: 600;
 	line-height: 1;
@@ -437,9 +493,9 @@ h1 {
 	cursor: pointer;
 	z-index: var(--z-nav);
 	box-shadow:
-		0 4px 12px rgba(0, 0, 0, 0.15),
-		0 0 0 1px rgba(133, 227, 255, 0.15);
-	transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
+		0 4px 16px rgba(0, 0, 0, 0.3),
+		inset 0 1px 0 rgba(255, 255, 255, 0.1);
+	transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease, color 0.25s ease, border-color 0.25s ease;
 
 	-webkit-tap-highlight-color: transparent;
 	user-select: none;
@@ -448,11 +504,12 @@ h1 {
 @media (hover: hover) {
 	.nav-button:hover {
 		background: var(--color-accent);
-		color: #070216;
+		color: #0a1a2a;
+		border-color: rgba(133, 227, 255, 0.8);
 		transform: translateY(-50%) scale(1.12);
 		box-shadow:
-			0 6px 22px var(--color-accent-soft),
-			0 0 0 2px rgba(133, 227, 255, 0.4);
+			0 6px 24px var(--color-accent-soft),
+			0 0 0 2px rgba(133, 227, 255, 0.3);
 	}
 }
 
@@ -462,12 +519,12 @@ h1 {
 
 .nav-button:focus-visible {
 	outline: 2px solid var(--color-accent);
-	outline-offset: 2px;
+	outline-offset: 3px;
 }
 
 /* Край ленты — приглушаем */
 .nav-button.is-edge {
-	opacity: 0.4;
+	opacity: 0.35;
 	cursor: default;
 }
 
@@ -504,11 +561,12 @@ h1 {
 
 @media (hover: hover) {
 	.youtube-poster:hover img {
-		transform: scale(1.05);
+		transform: scale(1.06);
 	}
 }
 
-/* Красная круглая кнопка ▶ */
+/* Красная круглая кнопка ▶ — с усиленной тенью, чтобы читалась
+   на любом превью (светлом или тёмном). */
 .video-play-button {
 	position: absolute;
 	top: 50%;
@@ -516,23 +574,29 @@ h1 {
 	transform: translate(-50%, -50%);
 	width: 70px;
 	height: 70px;
-	background: rgba(255, 0, 0, 0.9);
+	background: rgba(220, 0, 0, 0.92);
 	border-radius: 50%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	color: white;
 	font-size: 24px;
-	transition: background 0.3s ease, transform 0.3s ease;
+	transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 	backdrop-filter: blur(10px);
 	-webkit-backdrop-filter: blur(10px);
-	border: 2px solid rgba(255, 255, 255, 0.3);
+	border: 2px solid rgba(255, 255, 255, 0.4);
+	box-shadow:
+		0 4px 20px rgba(220, 0, 0, 0.5),
+		0 0 0 4px rgba(255, 255, 255, 0.1);
 }
 
 @media (hover: hover) {
 	.youtube-poster:hover .video-play-button {
 		background: rgba(255, 0, 0, 1);
-		transform: translate(-50%, -50%) scale(1.1);
+		transform: translate(-50%, -50%) scale(1.12);
+		box-shadow:
+			0 6px 28px rgba(255, 0, 0, 0.6),
+			0 0 0 6px rgba(255, 255, 255, 0.15);
 	}
 }
 
@@ -570,6 +634,9 @@ h1 {
 		margin-bottom: 30px;
 		padding: 20px;
 		border-radius: var(--radius-md);
+		/* На планшете blur меньше — экономим GPU */
+		backdrop-filter: blur(14px) saturate(130%);
+		-webkit-backdrop-filter: blur(14px) saturate(130%);
 	}
 
 	.text-content {
@@ -588,6 +655,9 @@ h1 {
 
 	.media-gallery {
 		padding: 20px 15px;
+		background: rgba(255, 255, 255, 0.05);
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
 	}
 
 	.gallery-container {
@@ -626,6 +696,10 @@ h1 {
 		margin-bottom: 25px;
 		padding: 15px;
 		border-radius: 10px;
+		/* На мобильных blur отключаем — GPU слабее, эффект почти не виден */
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+		background: rgba(15, 30, 60, 0.55);
 	}
 
 	.text-content {
@@ -642,24 +716,24 @@ h1 {
 		padding: 0 10px;
 	}
 
-	/* На узких экранах увеличиваем межстрочный интервал для читаемости
-	   мелкого текста (1.7 при 0.9rem — слишком плотно). */
+	/* На узких экранах увеличиваем межстрочный интервал для читаемости */
 	.text-content p {
 		font-size: clamp(0.9rem, 3vw, 1.2rem);
 		line-height: 1.55;
 		padding: 0 10px;
 		text-indent: 1rem;
-		/* уменьшен отступ первой строки */
 	}
 
 	.media-gallery {
 		padding: 15px 12px;
+		background: rgba(255, 255, 255, 0.04);
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
 	}
 
 	.gallery-container {
 		gap: 12px;
 		padding: 10px 0;
-		/* На мобильных snap мягче — не «дёргает» при медленном свайпе */
 		scroll-snap-type: x proximity;
 	}
 
@@ -684,7 +758,6 @@ h1 {
 @media (max-width: 380px) {
 	.media-item {
 		width: 80vw;
-		/* чуть шире, чтобы фото не было слишком мелким */
 	}
 
 	.gallery-container {
@@ -702,9 +775,7 @@ h1 {
 @media (-webkit-min-device-pixel-ratio: 2),
 (min-resolution: 192dpi) {
 	.text-content p {
-		text-shadow:
-			0.15px 0.15px 0.3px rgba(255, 255, 255, 0.4),
-			-0.15px -0.15px 0.3px rgba(0, 16, 88, 0.08);
+		text-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.35);
 	}
 }
 
@@ -757,6 +828,8 @@ h1 {
 		border-radius: 0;
 		margin-bottom: 20px;
 		padding: 15px;
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
 	}
 
 	/* Блики не печатаем */
@@ -770,6 +843,9 @@ h1 {
 	.text-content p {
 		color: black;
 		text-shadow: none;
+		-webkit-text-fill-color: currentColor;
+		filter: none;
+		background: none;
 	}
 
 	.image-content {

@@ -6,8 +6,18 @@
      • кнопка закрытия (.close)
      • стрелки навигации модалки (.modal-nav)
      • YouTube-плеер внутри модалки (.youtube-container и его части)
+
    Подключается ПОСЛЕДНИМ, потому что переопределяет некоторые
    общие правила (z-index, position: fixed).
+
+   Ключевые решения:
+     • фото занимает ВЕСЬ экран — object-fit: contain сохраняет пропорции:
+       горизонтальное растягивается по ширине, вертикальное — по высоте;
+     • кнопки (крестик, стрелки) плавают ПОВЕРХ фото (position: fixed),
+       не занимают место в layout;
+     • кнопки полупрозрачные в покое, полноценные при hover/focus —
+       не отвлекают от фото, но остаются доступными;
+     • на мобильных (< 600px) стрелки скрыты — свайп достаточно.
    ============================================================================ */
 
 
@@ -19,172 +29,220 @@
    ---------------------------------------------------------------------------- */
 .modal {
 	display: none;
-	/* скрыто по умолчанию; JS открывает */
 	position: fixed;
-	/* поверх страницы, не скроллится с ней */
 	inset: 0;
-	/* на весь экран */
 	z-index: var(--z-modal);
-	/* слой модалки из переменных base.css */
-	background-color: rgba(0, 0, 0, 0.95);
-	/* почти чёрный фон — фото/видео главные */
+	background-color: rgba(0, 0, 0, 0.97);
 	align-items: center;
-	/* центрирование контента по вертикали */
 	justify-content: center;
-	/* и по горизонтали */
-	backdrop-filter: blur(5px);
-	/* размытие страницы под модалкой */
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
 }
 
-/* Контейнер контента: ограничивает размер, центрирует фото/видео. */
+/* Контейнер контента: занимает ВЕСЬ экран.
+   Никаких max-width/max-height — фото само определит размер
+   через object-fit: contain на .modal-media. */
 .modal-content {
 	position: relative;
-	margin: auto;
+	margin: 0;
 	padding: 0;
-	width: 90%;
-	max-width: 900px;
-	max-height: 90vh;
+	width: 100vw;
+	height: 100vh;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-
-	/* Разрешаем горизонтальный и вертикальный жесты.
-	   Без этого браузер может «съедать» свайп как навигацию «назад». */
 	touch-action: pan-x pan-y;
-
-	/* Не выделяем текст при свайпе */
 	user-select: none;
 	-webkit-user-select: none;
 }
 
-
+/* Само фото/видео.
+   width: 100%, height: 100% — контейнер уже ограничен экраном.
+   object-fit: contain — фото вписывается целиком, сохраняя пропорции:
+     • горизонтальное — растянется по ширине;
+     • вертикальное — по высоте. */
 .modal-media {
-	max-width: min(95vw, 1200px);
-	max-height: 85vh;
-	width: auto;
-	height: auto;
+	width: 100%;
+	height: 100%;
 	object-fit: contain;
-	border-radius: var(--radius-sm);
-	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+	border-radius: 0;
+	box-shadow: none;
 
 	/* Свайп по фото не должен «тащить» картинку */
 	-webkit-user-drag: none;
 	pointer-events: auto;
 }
 
-/* На очень широких экранах разрешаем фото до 1100px. */
-@media (min-width: 1200px) {
-	.modal-media {
-		max-width: 1100px;
-	}
-}
-
 
 /* ----------------------------------------------------------------------------
    2. КНОПКА ЗАКРЫТИЯ
    ----------------------------------------------------------------------------
-   Круглая × в правом верхнем углу. Всегда поверх контента.
+   Круглая × в правом верхнем углу. Плавает ПОВЕРХ фото.
+
+   В покое — полупрозрачная (opacity: 0.45), не отвлекает от фото.
+   При hover/focus — полноценная (opacity: 1), с красной заливкой.
    ---------------------------------------------------------------------------- */
 .close {
-	position: absolute;
+	position: fixed;
 	top: 20px;
-	right: 30px;
-	color: #f1f1f1;
-	font-size: 40px;
-	/* крупный × — легко попасть пальцем */
-	font-weight: bold;
-	cursor: pointer;
-	transition: all 0.3s ease;
-	z-index: var(--z-modal-ctrl);
-	/* поверх стрелок и контента */
-	background: rgba(0, 0, 0, 0.5);
-	/* полупрозрачный круг, чтобы × читался на любом фоне */
-	width: 50px;
-	height: 50px;
+	right: 20px;
+
+	width: 52px;
+	height: 52px;
 	border-radius: 50%;
+	border: 1px solid rgba(255, 255, 255, 0.3);
+
+	/* Тёмное стекло — читается на любом фоне */
+	background: rgba(15, 30, 50, 0.7);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+
+	color: #e8f4f8;
+	font-size: 32px;
+	font-weight: 400;
+	line-height: 1;
+	cursor: pointer;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	backdrop-filter: blur(10px);
+
+	z-index: var(--z-modal-ctrl);
+	box-shadow:
+		0 4px 16px rgba(0, 0, 0, 0.4),
+		inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+	/* Полупрозрачная в покое — не отвлекает от фото */
+	opacity: 0.45;
+	transition: opacity 0.25s ease, background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+
+	-webkit-tap-highlight-color: transparent;
+	user-select: none;
 }
 
-/* Наведение: красная заливка — привычный сигнал «закрыть». */
-.close:hover {
-	color: #fff;
-	background: rgba(255, 0, 0, 0.7);
-	transform: scale(1.1);
+/* При наведении или фокусе — полноценная, с красной заливкой */
+@media (hover: hover) {
+	.close:hover {
+		opacity: 1;
+		background: rgba(220, 0, 0, 0.9);
+		color: #fff;
+		border-color: rgba(255, 100, 100, 0.7);
+		transform: scale(1.1);
+		box-shadow:
+			0 6px 24px rgba(220, 0, 0, 0.5),
+			0 0 0 2px rgba(255, 100, 100, 0.3);
+	}
+}
+
+/* Клавиатурный фокус — тоже полноценная */
+.close:focus-visible {
+	opacity: 1;
+	outline: 2px solid var(--color-accent);
+	outline-offset: 3px;
+}
+
+.close:active {
+	transform: scale(1.05);
 }
 
 
 /* ----------------------------------------------------------------------------
    3. СТРЕЛКИ НАВИГАЦИИ МОДАЛКИ
    ----------------------------------------------------------------------------
-   Крупные полупрозрачные ‹ › по бокам. В отличие от .nav-button галереи,
-   они больше (60px), прозрачнее (на тёмном фоне) и с белым цветом.
+   Крупные ‹ › по бокам. Плавают ПОВЕРХ фото.
+
+   В покое — полупрозрачные (opacity: 0.45), не отвлекают от фото.
+   При hover/focus — полноценные, с голубой заливкой.
+   На мобильных (< 600px) скрыты — свайп достаточно.
    ---------------------------------------------------------------------------- */
 .modal-nav {
-	position: absolute;
+	position: fixed;
 	top: 50%;
 	transform: translateY(-50%);
-	/* центрирование по вертикали */
-	background: rgba(255, 255, 255, 0.2);
-	/* полупрозрачный белый — на тёмном фоне */
-	border: none;
+
 	width: 60px;
 	height: 60px;
 	border-radius: 50%;
-	font-size: 28px;
-	color: white;
+	border: 1px solid rgba(255, 255, 255, 0.3);
+
+	background: rgba(15, 30, 50, 0.7);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+
+	color: #e8f4f8;
+	font-size: 30px;
+	font-weight: 600;
+	line-height: 1;
 	cursor: pointer;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	transition: all 0.3s ease;
+
 	z-index: var(--z-modal-ctrl);
-	backdrop-filter: blur(10px);
+	box-shadow:
+		0 4px 16px rgba(0, 0, 0, 0.4),
+		inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+	/* Полупрозрачные в покое — не отвлекают от фото */
+	opacity: 0.45;
+	transition: opacity 0.25s ease, background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+
+	-webkit-tap-highlight-color: transparent;
+	user-select: none;
 }
 
-/* Наведение: заметнее и крупнее. */
-.modal-nav:hover {
-	background: rgba(255, 255, 255, 0.4);
-	transform: translateY(-50%) scale(1.1);
+/* При наведении или фокусе — полноценные, с голубой заливкой */
+@media (hover: hover) {
+	.modal-nav:hover {
+		opacity: 1;
+		background: var(--color-accent);
+		color: #0a1a2a;
+		border-color: rgba(133, 227, 255, 0.9);
+		transform: translateY(-50%) scale(1.12);
+		box-shadow:
+			0 6px 24px var(--color-accent-soft),
+			0 0 0 2px rgba(133, 227, 255, 0.35);
+	}
 }
 
-/* Позиции у краёв экрана. */
+/* Клавиатурный фокус — тоже полноценные */
+.modal-nav:focus-visible {
+	opacity: 1;
+	outline: 2px solid var(--color-accent);
+	outline-offset: 3px;
+}
+
+.modal-nav:active {
+	transform: translateY(-50%) scale(1.05);
+}
+
 .modal-prev {
-	left: 25px;
+	left: 20px;
 }
 
 .modal-next {
-	right: 25px;
+	right: 20px;
 }
 
 
 /* ----------------------------------------------------------------------------
    4. YOUTUBE-ПЛЕЕР В МОДАЛКЕ
    ----------------------------------------------------------------------------
-   Классический «трюк с padding-bottom: 56.25%» для адаптивного iframe 16:9:
-   контейнер получает высоту = 56.25% от ширины (это 9/16), а iframe
-   растягивается абсолютно на весь контейнер.
+   Классический «трюк с padding-bottom: 56.25%» для адаптивного iframe 16:9.
+   Плеер вписан в экран с отступами под кнопки.
    ---------------------------------------------------------------------------- */
 .youtube-container {
 	position: relative;
-	width: 100%;
+	width: calc(100vw - 160px);
+	max-width: 1600px;
 	height: 0;
-	/* высоту задаёт padding-bottom */
-	padding-bottom: 56.25%;
-	/* 16:9 → 9 / 16 = 0.5625 */
-	max-width: 1200px;
+	padding-bottom: min(calc((100vw - 160px) * 0.5625), calc(100vh - 140px));
 	margin: 0 auto;
 	border-radius: var(--radius-md);
 	overflow: hidden;
-	/* обрезаем iframe по скруглению */
-	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
 	background: #000;
-	/* чёрный фон до загрузки iframe */
 }
 
-/* Сам iframe растянут на весь контейнер абсолютно. */
 .youtube-iframe {
 	position: absolute;
 	inset: 0;
@@ -193,9 +251,7 @@
 	border: none;
 }
 
-/* Оверлей с кнопкой «Нажмите для воспроизведения».
-   Перекрывает iframe, пока пользователь не кликнул — так мы не запускаем
-   autoplay (браузеры его блокируют и это раздражает). */
+/* Оверлей с кнопкой «Нажмите для воспроизведения». */
 .youtube-play-overlay {
 	position: absolute;
 	inset: 0;
@@ -203,17 +259,16 @@
 	align-items: center;
 	justify-content: center;
 	background: rgba(0, 0, 0, 0.45);
-	/* лёгкое затемнение превью */
 	cursor: pointer;
 	transition: background 0.3s ease;
 }
 
-/* Наведение: затемнение чуть плотнее — акцент на кнопке. */
-.youtube-play-overlay:hover {
-	background: rgba(0, 0, 0, 0.6);
+@media (hover: hover) {
+	.youtube-play-overlay:hover {
+		background: rgba(0, 0, 0, 0.6);
+	}
 }
 
-/* Вертикальная композиция: иконка ▶ + подпись. */
 .youtube-play-button {
 	display: flex;
 	flex-direction: column;
@@ -223,23 +278,22 @@
 	text-align: center;
 }
 
-/* Красный круг с ▶ — визуально «как у YouTube», но крупнее и заметнее. */
+/* Красный круг с ▶ */
 .youtube-play-button .play-icon {
 	width: 80px;
 	height: 80px;
 	border-radius: 50%;
-	background: rgba(255, 0, 0, 0.9);
+	background: rgba(220, 0, 0, 0.92);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	font-size: 28px;
 	padding-left: 5px;
-	/* компенсирует оптическое смещение треугольника */
-	box-shadow: 0 8px 30px rgba(255, 0, 0, 0.4);
-	/* красное свечение вокруг */
+	box-shadow:
+		0 8px 30px rgba(220, 0, 0, 0.4),
+		0 0 0 4px rgba(255, 255, 255, 0.1);
 }
 
-/* Подпись под кнопкой — в стиле лонгрида (курсив, антиква). */
 .youtube-play-button .play-text {
 	font-family: 'Playfair Display', Georgia, serif;
 	font-style: italic;
@@ -251,29 +305,37 @@
 /* ----------------------------------------------------------------------------
    5. АДАПТИВ ОВЕРЛЕЯ
    ----------------------------------------------------------------------------
-   На мобильных стрелки и кнопка закрытия меньше, но остаются удобными
-   для пальца (минимум ~44px).
+   На планшетах (≤ 768px) кнопки меньше, но остаются удобными для пальца.
+   На мобильных (≤ 599px) стрелки скрыты — свайп достаточно.
    ---------------------------------------------------------------------------- */
 @media (max-width: 768px) {
 	.modal-nav {
 		width: 50px;
 		height: 50px;
-		font-size: 22px;
+		font-size: 24px;
 	}
 
 	.close {
 		top: 15px;
-		right: 20px;
-		font-size: 35px;
-		width: 45px;
-		height: 45px;
+		right: 15px;
+		width: 46px;
+		height: 46px;
+		font-size: 28px;
 	}
 
-	.modal-content {
-		width: 95%;
+	.modal-prev {
+		left: 15px;
 	}
 
-	/* Кнопка play на телефоне меньше, чтобы не закрывать превью. */
+	.modal-next {
+		right: 15px;
+	}
+
+	.youtube-container {
+		width: calc(100vw - 40px);
+		padding-bottom: min(calc((100vw - 40px) * 0.5625), calc(100vh - 100px));
+	}
+
 	.youtube-play-button .play-icon {
 		width: 64px;
 		height: 64px;
@@ -281,26 +343,42 @@
 	}
 }
 
-/* ----------------------------------------------------------------------------
-   МОБИЛЬНЫЙ: СТРЕЛКИ МОДАЛКИ СКРЫТЫ
-   ----------------------------------------------------------------------------
-   На экранах ≤ 599px стрелки ‹ › в модалке не нужны:
-     • они перекрывают фото (особенно вертикальные);
-     • свайп влево/вправо уже реализован в modal.js;
-     • кнопка закрытия × остаётся — она нужна.
-   ---------------------------------------------------------------------------- */
+/* Мобильные: стрелки скрыты, фото почти на весь экран */
 @media (max-width: 599px) {
 	.modal-nav {
 		display: none !important;
+	}
+
+	/* На мобильных фото занимает весь экран — крестик плавает поверх */
+	.modal-content {
+		width: 100vw;
+		height: 100vh;
+	}
+
+	.youtube-container {
+		width: calc(100vw - 20px);
+		padding-bottom: min(calc((100vw - 20px) * 0.5625), calc(100vh - 80px));
 	}
 }
 
 
 /* ----------------------------------------------------------------------------
-   6. ПЕЧАТЬ
+   6. ДОСТУПНОСТЬ: УМЕНЬШЕННАЯ АНИМАЦИЯ
+   ---------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+
+	.close,
+	.modal-nav,
+	.youtube-play-overlay {
+		transition: none;
+	}
+}
+
+
+/* ----------------------------------------------------------------------------
+   7. ПЕЧАТЬ
    ----------------------------------------------------------------------------
-   Модалка на бумаге не нужна — принудительно скрываем,
-   даже если JS забыл её закрыть.
+   Модалка на бумаге не нужна — принудительно скрываем.
    ---------------------------------------------------------------------------- */
 @media print {
 	.modal {

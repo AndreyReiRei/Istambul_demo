@@ -1,18 +1,14 @@
 /**
  * particles.js
  * ----------------------------------------------------------------------------
- * Canvas-анимация «созвездия»: частицы со свечением, плавным рождением
- * и смертью, связями между близкими соседями и отталкиванием от курсора.
+ * Canvas-анимация «Стамбул: солнце и звёзды».
  *
- * Почему canvas, а не DOM:
- *   • одна операция рисования на кадр вместо N записей в style.transform;
- *   • shadowBlur даёт красивое свечение бесплатно;
- *   • связи между частицами (линии) невозможны в DOM без тысяч элементов.
+ * Два типа частиц:
+ *   • sun (70%) — тёплые круглые блики, всплывают снизу вверх, мерцают;
+ *   • star (30%) — холодные звёзды, вспыхивают в верхней части экрана,
+ *     гаснут и появляются в новом месте.
  *
- * Почему пул объектов:
- *   • частицы рождаются и умирают постоянно; без пула это сотни new/GC в секунду;
- *   • пул фиксированного размера, new только при инициализации;
- *   • «смерть» = сброс параметров и возврат в пул, «рождение» = acquire().
+ * Каждая частица оставляет полупрозрачный «хвост» — эффект движения.
  *
  * Публичный API:
  *   const fx = initParticleAnimation();
@@ -43,39 +39,36 @@ export function initParticleAnimation() {
 	const isLowPower = isMobile || navigator.hardwareConcurrency <= 4;
 
 	const settings = {
-		// Количество частиц
-		particleCount: isLowPower ? 40 : 80,
+		particleCount: isLowPower ? 35 : 70,
 
-		// Размер
-		size: { min: 1.5, max: 4 },
+		// Солнечные блики (70% частиц)
+		sun: {
+			ratio: 0.7,
+			size: { min: 2, max: 5 },
+			speed: { min: 0.1, max: 0.4 },     // медленно вверх
+			lifetime: { min: 4000, max: 9000 },
+			glowBlur: isLowPower ? 6 : 12,
+			colors: ['#FFD700', '#FFC107', '#FFE082', '#FFB300', '#FFF59D'],
+			twinkle: true,
+		},
 
-		// Скорость
-		speed: { min: 0.15, max: 0.6 },
-
-		// Время жизни (мс)
-		lifetime: { min: 6000, max: 14000 },
+		// Звёзды (30% частиц) — вспыхивают сверху
+		star: {
+			ratio: 0.3,
+			size: { min: 1, max: 3 },
+			lifetime: { min: 2500, max: 6000 }, // живут меньше — чаще вспыхивают
+			glowBlur: isLowPower ? 5 : 10,
+			colors: ['#6bdcff', '#a8e6ff', '#e8f4f8', '#ffffff', '#85e3ff'],
+			// Верхняя часть экрана, где появляются звёзды (доля высоты)
+			zoneTop: 0.5,
+		},
 
 		// Плавное появление/угасание (мс)
 		fadeIn: 800,
 		fadeOut: 1200,
 
-		// Связи между частицами
-		linkDistance: isLowPower ? 100 : 140,  // макс. расстояние для линии
-		linkMaxWidth: 1,                       // толщина линии
-		linkMaxAlpha: 0.35,                    // прозрачность линии
-
-		// Свечение
-		glowBlur: isLowPower ? 8 : 15,
-
-		// Взаимодействие с мышью
-		mouseDist: 150,
-		mouseForce: 0.15,
-
-		// Цвета (тёплая палитра)
-		colors: [
-			'#FFD700', '#FFA500', '#FF8C00', '#FF6347', '#FF4500',
-			'#FFEC8B', '#FFFACD', '#FFFFE0', '#FAFAD2', '#EEE8AA',
-		],
+		// След: длина хвоста (для солнца)
+		trailLength: isLowPower ? 2 : 4,
 	};
 
 	// ------------------------------------------------------------------
@@ -84,7 +77,7 @@ export function initParticleAnimation() {
 	const viewport = {
 		width: window.innerWidth,
 		height: window.innerHeight,
-		dpr: Math.min( window.devicePixelRatio || 1, 2 ), // выше 2 — оверкилл
+		dpr: Math.min( window.devicePixelRatio || 1, 2 ),
 	};
 
 	// ------------------------------------------------------------------
@@ -95,18 +88,10 @@ export function initParticleAnimation() {
 	container.appendChild( canvas );
 
 	const ctx = canvas.getContext( '2d', {
-		// alpha: true — фон прозрачный, сквозь canvas видно градиенты sun-rays
 		alpha: true,
-		// desynchronized — подсказка браузеру рисовать без синхронизации с композитором,
-		// может снизить задержку (работает в Chrome/Edge)
 		desynchronized: true,
 	} );
 
-	/**
-	 * Подгонка canvas под размер окна с учётом DPR.
-	 * CSS-размер = viewport, реальный буфер = viewport × dpr.
-	 * ctx.scale(dpr, dpr) — дальше рисуем в CSS-координатах.
-	 */
 	function resizeCanvas() {
 		viewport.width = window.innerWidth;
 		viewport.height = window.innerHeight;
@@ -126,141 +111,188 @@ export function initParticleAnimation() {
 	// ------------------------------------------------------------------
 	class Particle {
 		constructor() {
-			// Поля инициализируются в reset(), чтобы pool мог переиспользовать
-			// объект без new.
 			this.reset();
-			// Жива ли сейчас (участвует ли в отрисовке)
 			this.alive = false;
 		}
 
 		/**
-		 * Сброс параметров к новым случайным значениям.
-		 * Вызывается при создании и при каждом «возрождении».
+		 * Сброс параметров: случайный тип (sun/star) и все поля под него.
 		 */
 		reset() {
-			this.size =
-				Math.random() * ( settings.size.max - settings.size.min ) + settings.size.min;
+			const isSun = Math.random() < settings.sun.ratio;
+			this.type = isSun ? 'sun' : 'star';
+			const cfg = settings[this.type];
 
-			// Стартовая позиция — в пределах экрана
-			this.x = Math.random() * viewport.width;
-			this.y = Math.random() * viewport.height;
+			this.size = Math.random() * ( cfg.size.max - cfg.size.min ) + cfg.size.min;
 
-			// Скорость
-			const speed =
-				Math.random() * ( settings.speed.max - settings.speed.min ) + settings.speed.min;
-			const angle = Math.random() * Math.PI * 2;
-			this.vx = Math.cos( angle ) * speed;
-			this.vy = Math.sin( angle ) * speed;
+			if ( this.type === 'sun' ) {
+				// Солнце: стартует в нижней части и всплывает вверх
+				this.x = Math.random() * viewport.width;
+				this.y = viewport.height * 0.4 + Math.random() * viewport.height * 0.6;
 
-			// Цвет
-			this.color = settings.colors[Math.floor( Math.random() * settings.colors.length )];
+				const speed = Math.random() * ( cfg.speed.max - cfg.speed.min ) + cfg.speed.min;
+				this.vy = -speed;                     // вверх
+				this.vx = ( Math.random() - 0.5 ) * 0.15; // лёгкое покачивание
+			} else {
+				// Звезда: появляется в верхней зоне, стоит на месте,
+				// вспыхивает и гаснет (без движения)
+				this.x = Math.random() * viewport.width;
+				this.y = Math.random() * viewport.height * cfg.zoneTop;
 
-			// Время жизни
-			this.lifetime =
-				Math.random() * ( settings.lifetime.max - settings.lifetime.min ) +
-				settings.lifetime.min;
+				this.vx = 0;
+				this.vy = 0;
+			}
+
+			this.color = cfg.colors[Math.floor( Math.random() * cfg.colors.length )];
+			this.lifetime = Math.random() * ( cfg.lifetime.max - cfg.lifetime.min ) + cfg.lifetime.min;
 			this.age = 0;
-
-			// Текущая прозрачность (плавно меняется в update)
 			this.alpha = 0;
 
-			// Смещение от отталкивания мышью (влияет на отрисовку, не на x/y)
-			this.offsetX = 0;
-			this.offsetY = 0;
+			// Для хвоста
+			this.prevX = this.x;
+			this.prevY = this.y;
 		}
 
 		/**
-		 * Обновление за кадр. dt — миллисекунды с прошлого кадра
-		 * (нормализует скорость на разных мониторах — 60 Гц vs 120 Гц).
+		 * Обновление за кадр. dt — миллисекунды с прошлого кадра.
 		 */
 		update( dt ) {
 			if ( !this.alive ) return;
 
-			// Нормализованный множитель: 1.0 при 60 fps
 			const k = dt / 16.67;
-
 			this.age += dt;
 
-			// --- Позиция ---
-			this.x += this.vx * k;
-			this.y += this.vy * k;
+			// --- Движение (только солнце) ---
+			if ( this.type === 'sun' ) {
+				this.prevX = this.x;
+				this.prevY = this.y;
 
-			// --- Отскок от границ ---
-			if ( this.x < 0 ) { this.x = 0; this.vx *= -1; }
-			if ( this.x > viewport.width ) { this.x = viewport.width; this.vx *= -1; }
-			if ( this.y < 0 ) { this.y = 0; this.vy *= -1; }
-			if ( this.y > viewport.height ) { this.y = viewport.height; this.vy *= -1; }
+				this.x += this.vx * k + Math.sin( this.age / 1000 ) * 0.1 * k;
+				this.y += this.vy * k;
 
-			// --- Отталкивание от курсора ---
-			// Плавно тянем offset к целевой точке, не меняя x/y.
-			// Так частица «убегает» визуально, но продолжает жить по своим законам.
-			let targetOffsetX = 0;
-			let targetOffsetY = 0;
-			if ( mouse.x !== undefined ) {
-				const dx = this.x - mouse.x;
-				const dy = this.y - mouse.y;
-				const distSq = dx * dx + dy * dy;
-				const maxSq = settings.mouseDist * settings.mouseDist;
-				if ( distSq < maxSq ) {
-					const dist = Math.sqrt( distSq ) || 1;
-					const force = ( settings.mouseDist - dist ) / settings.mouseDist;
-					targetOffsetX = ( dx / dist ) * force * 60;
-					targetOffsetY = ( dy / dist ) * force * 60;
-				}
+				// Отскок от боковых границ
+				if ( this.x < 0 ) { this.x = 0; this.vx *= -1; }
+				if ( this.x > viewport.width ) { this.x = viewport.width; this.vx *= -1; }
 			}
-			// Лерп (линейная интерполяция) — плавное смещение
-			this.offsetX += ( targetOffsetX - this.offsetX ) * 0.15 * k;
-			this.offsetY += ( targetOffsetY - this.offsetY ) * 0.15 * k;
 
-			// --- Прозрачность: fade-in / fade-out ---
-			if ( this.age < settings.fadeIn ) {
-				// Появление
-				this.alpha = this.age / settings.fadeIn;
-			} else if ( this.age > this.lifetime - settings.fadeOut ) {
-				// Угасание
-				this.alpha = ( this.lifetime - this.age ) / settings.fadeOut;
+			// --- Прозрачность ---
+			// fade-in: появление. fade-out: угасание.
+			// Для звезды добавляем «вспышку» в середине жизни:
+			// alpha быстро растёт, потом медленно гаснет — как пульс.
+			const fadeIn = settings.fadeIn;
+			const fadeOut = settings.fadeOut;
+
+			if ( this.age < fadeIn ) {
+				this.alpha = this.age / fadeIn;
+			} else if ( this.age > this.lifetime - fadeOut ) {
+				this.alpha = ( this.lifetime - this.age ) / fadeOut;
 			} else {
-				// Полная яркость
 				this.alpha = 1;
 			}
 
-			// Защита от отрицательной альфы из-за погрешностей
+			// Мерцание — только для солнца
+			if ( settings[this.type].twinkle ) {
+				this.alpha *= 0.7 + 0.3 * Math.sin( this.age / 500 );
+			}
+
+			// Для звезды — короткая яркая вспышка в середине жизни
+			if ( this.type === 'star' ) {
+				const flash = Math.sin( ( this.age / this.lifetime ) * Math.PI ); // 0 → 1 → 0
+				this.alpha *= 0.3 + 0.7 * flash;
+			}
+
 			if ( this.alpha < 0 ) this.alpha = 0;
 
-			// --- Проверка смерти ---
-			if ( this.age >= this.lifetime ) {
+			// Смерть
+			if ( this.age >= this.lifetime || this.y < -10 ) {
 				this.alive = false;
 			}
 		}
 
 		/**
-		 * Отрисовка. Вызывается из renderer после обновления всех частиц.
-		 * Координаты — CSS-пиксели (ctx уже отмасштабирован на DPR).
+		 * Отрисовка.
 		 */
 		draw( ctx ) {
 			if ( !this.alive || this.alpha <= 0 ) return;
 
-			const x = this.x + this.offsetX;
-			const y = this.y + this.offsetY;
+			const cfg = settings[this.type];
 
+			// --- Хвост (только солнце) ---
+			if ( this.type === 'sun' && this.age > settings.fadeIn ) {
+				ctx.globalAlpha = this.alpha * 0.4;
+				ctx.strokeStyle = this.color;
+				ctx.lineWidth = this.size * 0.6;
+				ctx.lineCap = 'round';
+				ctx.beginPath();
+				ctx.moveTo( this.prevX, this.prevY );
+				ctx.lineTo( this.x, this.y );
+				ctx.stroke();
+			}
+
+			// --- Тело частицы ---
 			ctx.globalAlpha = this.alpha;
 
-			// Свечение: shadowBlur + shadowColor (дорого, но красиво).
-			// На слабых устройствах отключаем — визуально всё равно сойдёт.
 			if ( !isLowPower ) {
-				ctx.shadowBlur = settings.glowBlur;
+				ctx.shadowBlur = cfg.glowBlur;
 				ctx.shadowColor = this.color;
 			}
 
 			ctx.fillStyle = this.color;
-			ctx.beginPath();
-			ctx.arc( x, y, this.size, 0, Math.PI * 2 );
-			ctx.fill();
 
-			// Сбрасываем shadow после отрисовки, чтобы не влиять на следующую частицу
+			if ( this.type === 'sun' ) {
+				// Солнце — круг
+				ctx.beginPath();
+				ctx.arc( this.x, this.y, this.size, 0, Math.PI * 2 );
+				ctx.fill();
+			} else {
+				// Звезда — четырёхлучевая: маленький круг + 4 луча
+				this.drawStar( ctx );
+			}
+
 			if ( !isLowPower ) {
 				ctx.shadowBlur = 0;
 			}
+		}
+
+		/**
+		 * Рисует звезду: маленький круг в центре + 4 расходящихся луча.
+		 * Лучи тонкие и полупрозрачные — создают «вспышку».
+		 */
+		drawStar( ctx ) {
+			// Центральный круг
+			ctx.beginPath();
+			ctx.arc( this.x, this.y, this.size, 0, Math.PI * 2 );
+			ctx.fill();
+
+			// 4 луча (крест) — тонкие линии от центра
+			const rayLen = this.size * 3.5;
+			ctx.strokeStyle = this.color;
+			ctx.lineWidth = this.size * 0.4;
+			ctx.lineCap = 'round';
+
+			// Верхний луч
+			ctx.beginPath();
+			ctx.moveTo( this.x, this.y - this.size );
+			ctx.lineTo( this.x, this.y - rayLen );
+			ctx.stroke();
+
+			// Нижний луч
+			ctx.beginPath();
+			ctx.moveTo( this.x, this.y + this.size );
+			ctx.lineTo( this.x, this.y + rayLen );
+			ctx.stroke();
+
+			// Левый луч
+			ctx.beginPath();
+			ctx.moveTo( this.x - this.size, this.y );
+			ctx.lineTo( this.x - rayLen, this.y );
+			ctx.stroke();
+
+			// Правый луч
+			ctx.beginPath();
+			ctx.moveTo( this.x + this.size, this.y );
+			ctx.lineTo( this.x + rayLen, this.y );
+			ctx.stroke();
 		}
 	}
 
@@ -271,150 +303,66 @@ export function initParticleAnimation() {
 		items: [],
 		size: settings.particleCount,
 
-		/**
-		 * Инициализация пула: создаём сразу N мёртвых частиц.
-		 * Дальше — только переиспользование.
-		 */
 		init() {
 			for ( let i = 0; i < this.size; i++ ) {
 				const p = new Particle();
-				// Частицы стартуют мёртвыми; их разбудит spawnDead()
 				p.alive = false;
 				this.items.push( p );
 			}
 		},
 
-		/**
-		 * «Разбудить» мёртвые частицы: сбрасываем параметры и делаем живыми.
-		 * Возвращает количество разбуженных (для отладки/статистики).
-		 */
 		spawnDead() {
-			let spawned = 0;
 			for ( const p of this.items ) {
 				if ( !p.alive ) {
 					p.reset();
 					p.alive = true;
-					spawned++;
 				}
 			}
-			return spawned;
 		},
 
-		/**
-		 * Обновить все живые частицы.
-		 */
 		update( dt ) {
 			for ( const p of this.items ) {
 				p.update( dt );
 			}
-			// После обновления некоторые могли умереть — сразу заполняем пустоту,
-			// чтобы количество живых частиц оставалось стабильным.
 			this.spawnDead();
 		},
 
-		/**
-		 * Отрисовать все живые частицы.
-		 */
 		draw( ctx ) {
 			for ( const p of this.items ) {
 				p.draw( ctx );
 			}
-		},
-
-		/**
-		 * Живые частицы (для отрисовки связей).
-		 */
-		getAlive() {
-			return this.items.filter( ( p ) => p.alive && p.alpha > 0 );
 		},
 	};
 
 	pool.init();
 
 	// ------------------------------------------------------------------
-	// 6. Состояние анимации и курсор
+	// 6. Состояние анимации
 	// ------------------------------------------------------------------
 	let rafId = null;
 	let isRunning = false;
 	let isDestroyed = false;
 	let lastTime = 0;
 
-	const mouse = { x: undefined, y: undefined };
-
 	// ------------------------------------------------------------------
-	// 7. Отрисовка связей
-	// ------------------------------------------------------------------
-	/**
-	 * Рисует линии между близкими частицами.
-	 * O(n²) — для 80 частиц это 3160 проверок/кадр, приемлемо.
-	 * Для 200+ частиц нужен spatial hash, но нам не нужно.
-	 */
-	function drawLinks( aliveParticles ) {
-		const maxDist = settings.linkDistance;
-		const maxDistSq = maxDist * maxDist;
-		const len = aliveParticles.length;
-
-		ctx.shadowBlur = 0; // связи — без свечения, чтобы не тормозило
-
-		for ( let i = 0; i < len; i++ ) {
-			const a = aliveParticles[i];
-			const ax = a.x + a.offsetX;
-			const ay = a.y + a.offsetY;
-
-			for ( let j = i + 1; j < len; j++ ) {
-				const b = aliveParticles[j];
-				const dx = ( b.x + b.offsetX ) - ax;
-				const dy = ( b.y + b.offsetY ) - ay;
-				const distSq = dx * dx + dy * dy;
-				if ( distSq > maxDistSq ) continue;
-
-				const dist = Math.sqrt( distSq );
-				// Прозрачность линии: ближе — ярче
-				const alpha = ( 1 - dist / maxDist ) * settings.linkMaxAlpha;
-				// Учитываем прозрачность частиц — связь «проявляется» вместе с ними
-				const finalAlpha = alpha * Math.min( a.alpha, b.alpha );
-
-				ctx.globalAlpha = finalAlpha;
-				ctx.strokeStyle = a.color;
-				ctx.lineWidth = ( 1 - dist / maxDist ) * settings.linkMaxWidth;
-				ctx.beginPath();
-				ctx.moveTo( ax, ay );
-				ctx.lineTo( b.x + b.offsetX, b.y + b.offsetY );
-				ctx.stroke();
-			}
-		}
-		ctx.globalAlpha = 1;
-	}
-
-	// ------------------------------------------------------------------
-	// 8. Главный цикл
+	// 7. Главный цикл
 	// ------------------------------------------------------------------
 	function frame( now ) {
 		if ( !isRunning ) return;
 
-		// dt — миллисекунды с прошлого кадра. Ограничиваем 50 мс, чтобы после
-		// паузы (вкладка была скрыта) частицы не «телепортировались».
 		const dt = Math.min( now - lastTime, 50 );
 		lastTime = now;
 
-		// 1. Очистка canvas (полная, с учётом DPR)
 		ctx.clearRect( 0, 0, viewport.width, viewport.height );
 
-		// 2. Обновление физики
 		pool.update( dt );
-
-		// 3. Связи (рисуем ДО частиц, чтобы частицы были поверх)
-		const alive = pool.getAlive();
-		drawLinks( alive );
-
-		// 4. Частицы
 		pool.draw( ctx );
 
 		rafId = requestAnimationFrame( frame );
 	}
 
 	// ------------------------------------------------------------------
-	// 9. Управление
+	// 8. Управление
 	// ------------------------------------------------------------------
 	function start() {
 		if ( isDestroyed || isRunning ) return;
@@ -438,20 +386,8 @@ export function initParticleAnimation() {
 	}
 
 	// ------------------------------------------------------------------
-	// 10. События
+	// 9. События
 	// ------------------------------------------------------------------
-	function onMouseMove( e ) {
-		mouse.x = e.clientX;
-		mouse.y = e.clientY;
-	}
-
-	function onMouseLeave( e ) {
-		if ( !e.relatedTarget && !e.toElement ) {
-			mouse.x = undefined;
-			mouse.y = undefined;
-		}
-	}
-
 	function onVisibilityChange() {
 		if ( document.hidden ) {
 			stop();
@@ -465,8 +401,6 @@ export function initParticleAnimation() {
 		clearTimeout( resizeTimer );
 		resizeTimer = setTimeout( () => {
 			resizeCanvas();
-			// Частицы, вышедшие за новые границы, сами «отскокнутся» в update
-			// благодаря проверке границ. Пересоздавать пул не нужно.
 		}, 250 );
 	}
 
@@ -475,10 +409,8 @@ export function initParticleAnimation() {
 	}
 
 	// ------------------------------------------------------------------
-	// 11. Подписка
+	// 10. Подписка
 	// ------------------------------------------------------------------
-	document.addEventListener( 'mousemove', onMouseMove, { passive: true } );
-	document.addEventListener( 'mouseleave', onMouseLeave );
 	window.addEventListener( 'resize', onResize, { passive: true } );
 	document.addEventListener( 'visibilitychange', onVisibilityChange );
 	window.addEventListener( 'orientationchange', onResize, { passive: true } );
@@ -488,20 +420,18 @@ export function initParticleAnimation() {
 	}
 
 	// ------------------------------------------------------------------
-	// 12. Старт
+	// 11. Старт
 	// ------------------------------------------------------------------
 	pool.spawnDead();
 	start();
 
 	// ------------------------------------------------------------------
-	// 13. Публичный API
+	// 12. Публичный API
 	// ------------------------------------------------------------------
 	return {
 		start,
 		stop,
 		destroy() {
-			document.removeEventListener( 'mousemove', onMouseMove );
-			document.removeEventListener( 'mouseleave', onMouseLeave );
 			window.removeEventListener( 'resize', onResize );
 			window.removeEventListener( 'orientationchange', onResize );
 			document.removeEventListener( 'visibilitychange', onVisibilityChange );

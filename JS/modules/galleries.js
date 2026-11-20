@@ -4,20 +4,16 @@
  * Галереи: кнопки ‹ ›, свайп, открытие модалки.
  *
  * Особенности:
- *   • на мобильных (< 600px) кнопки скрыты CSS — JS не навешивает
- *     на них обработчики, чтобы не тратить ресурсы;
- *   • свайп работает через нативный overflow-x: auto + scroll-snap,
- *     JS только сбрасывает состояние после касания;
- *   • кнопки получают класс .is-edge, когда листать некуда (край ленты);
+ *   • обработчики на стрелки навешиваются ВСЕГДА — на мобильных
+ *     стрелки скрыты CSS (display: none), кликнуть нельзя, обработчики «спят»;
+ *   • свайп работает через нативный overflow-x: auto + scroll-snap;
+ *   • кнопки получают класс .is-edge, когда листать некуда;
  *   • ResizeObserver следит за изменением ширины — пересчитывает
- *     видимость кнопок при повороте экрана.
+ *     состояние кнопок при повороте экрана.
  * ----------------------------------------------------------------------------
  */
 
 import { openModal } from './modal.js';
-
-// Порог, ниже которого кнопки скрыты CSS и JS их не трогает
-const MOBILE_BREAKPOINT = 600;
 
 export function initGalleries() {
 	const galleries = document.querySelectorAll( '.media-gallery' );
@@ -32,46 +28,17 @@ function setupGallery( gallery ) {
 
 	if ( !container ) return;
 
-	// --- Свайп: touch-action: pan-y разрешает вертикальный скролл страницы,
-	//     горизонтальный жест обрабатывает сам контейнер.
-	//     touchend сбрасывает состояние, чтобы следующий свайп начался «с нуля».
-	let touchStartX = 0;
-	let touchStartY = 0;
-	let touchMoved = false;
-
-	container.addEventListener( 'touchstart', ( e ) => {
-		touchStartX = e.touches[0].clientX;
-		touchStartY = e.touches[0].clientY;
-		touchMoved = false;
-	}, { passive: true } );
-
-	container.addEventListener( 'touchmove', ( e ) => {
-		const dx = Math.abs( e.touches[0].clientX - touchStartX );
-		const dy = Math.abs( e.touches[0].clientY - touchStartY );
-		// Если движение больше по горизонтали — это свайп карусели
-		if ( dx > dy && dx > 5 ) {
-			touchMoved = true;
-		}
-	}, { passive: true } );
-
-	container.addEventListener( 'touchend', () => {
-		// Сбрасываем состояние — следующий свайп начнётся заново
-		touchMoved = false;
-	}, { passive: true } );
-
-	// --- Кнопки ‹ › (только если они видны)
+	// --- Кнопки ‹ › ---
+	// Обработчики навешиваем всегда. На мобильных стрелки скрыты через CSS,
+	// кликнуть по ним нельзя — обработчики просто не сработают.
 	if ( prevButton && nextButton ) {
-		const isMobile = window.matchMedia( `(max-width: ${MOBILE_BREAKPOINT - 1}px)` ).matches;
+		prevButton.addEventListener( 'click', () => {
+			container.scrollBy( { left: -container.clientWidth * 0.9, behavior: 'smooth' } );
+		} );
 
-		if ( !isMobile ) {
-			prevButton.addEventListener( 'click', () => {
-				container.scrollBy( { left: -container.clientWidth * 0.9, behavior: 'smooth' } );
-			} );
-
-			nextButton.addEventListener( 'click', () => {
-				container.scrollBy( { left: container.clientWidth * 0.9, behavior: 'smooth' } );
-			} );
-		}
+		nextButton.addEventListener( 'click', () => {
+			container.scrollBy( { left: container.clientWidth * 0.9, behavior: 'smooth' } );
+		} );
 
 		// Обновляем состояние кнопок при скролле
 		const updateNavState = () => {
@@ -85,7 +52,6 @@ function setupGallery( gallery ) {
 
 		container.addEventListener( 'scroll', updateNavState, { passive: true } );
 
-		// И при изменении размера контейнера (поворот экрана, ресайз окна)
 		if ( 'ResizeObserver' in window ) {
 			const ro = new ResizeObserver( updateNavState );
 			ro.observe( container );
@@ -93,11 +59,33 @@ function setupGallery( gallery ) {
 			window.addEventListener( 'resize', updateNavState );
 		}
 
-		// Первичная инициализация
 		updateNavState();
 	}
 
-	// --- Клик по миниатюре → открыть модалку
+	// --- Свайп: сбрасываем состояние после касания ---
+	let touchStartX = 0;
+	let touchStartY = 0;
+	let touchMoved = false;
+
+	container.addEventListener( 'touchstart', ( e ) => {
+		touchStartX = e.touches[0].clientX;
+		touchStartY = e.touches[0].clientY;
+		touchMoved = false;
+	}, { passive: true } );
+
+	container.addEventListener( 'touchmove', ( e ) => {
+		const dx = Math.abs( e.touches[0].clientX - touchStartX );
+		const dy = Math.abs( e.touches[0].clientY - touchStartY );
+		if ( dx > dy && dx > 5 ) {
+			touchMoved = true;
+		}
+	}, { passive: true } );
+
+	container.addEventListener( 'touchend', () => {
+		touchMoved = false;
+	}, { passive: true } );
+
+	// --- Клик по миниатюре → открыть модалку ---
 	mediaItems.forEach( ( item ) => {
 		item.addEventListener( 'click', () => openModal( item ) );
 	} );
