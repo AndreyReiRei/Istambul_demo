@@ -1,22 +1,28 @@
 /* ============================================================================
    MAIN.CSS
    ----------------------------------------------------------------------------
-   Стили страницы в потоке документа:
-     • контейнер и типографика (градиентный h1, текст на тёмном фоне)
-     • карточки-блоки (.content-block) — стеклянные панели с бликами
-     • обтекание текста вокруг главного фото дня
-     • галерея-скролл с миниатюрами (адаптив под 4 брейкпоинта)
-     • кнопки навигации галереи (скрыты на мобильных)
-     • адаптив и печать
-   Модалка и YouTube-плеер живут в overlay.css.
+   Стили страницы в потоке документа.
 
-   Соглашения:
-     • Все цвета/радиусы/тени — через переменные из base.css.
-     • Брейкпоинты: 1199px (ноутбук), 899px (планшет), 599px (мобильный),
-       380px (очень узкий). Единые для всей страницы.
-     • Hover-эффекты обёрнуты в @media (hover: hover) — на тач-устройствах
-       не «залипают».
-     • Все анимации отключаются при prefers-reduced-motion.
+   ПОРЯДОК СЕКЦИЙ:
+     1.  Контейнер
+     2.  Заголовки (h1, h2, p)
+     3.  Контент-блок (карточка дня)
+     4.  Блики по карточке
+     5.  Текстовый блок + обтекание картинкой
+     6.  Галерея-скролл
+     7.  Ленивая загрузка
+     8.  Кнопки навигации галереи
+     9.  YouTube-постер в галерее
+     10. Тумблер фоновых эффектов
+     11. Отключение эффектов (.effects-off)
+     12. Доступность (prefers-reduced-motion)
+     13. Печать
+     14. БРЕЙКПОИНТЫ (все @media — в одном месте)
+
+   СОГЛАШЕНИЯ:
+     • Цвета/радиусы/тени — через переменные из base.css.
+     • Hover-эффекты — только в @media (hover: hover).
+     • Брейкпоинты: 1199px, 899px, 599px, 380px. Все — в секции 14.
    ============================================================================ */
 
 
@@ -37,23 +43,13 @@
    2. ЗАГОЛОВКИ
    ---------------------------------------------------------------------------- */
 
-/* H1 — главный заголовок «Стамбул».
-   Градиентный текст: фон-градиент обрезается по контуру букв.
-
-   Важно для обрезки:
-     • line-height: 1.25 — даёт воздух сверху/снизу, курсив Playfair
-       не срезается;
-     • padding сверху/снизу 0.1em — запас для drop-shadow;
-     • padding по бокам 0.05em — курсивная последняя буква не вылезает;
-     • letter-spacing убран — курсив сам по себе широкий.
-
-   Градиент: холодный голубой → белый → тёплый золотой.
-   Контрастен и тёплому верху фона, и холодному низу. */
+/* H1 — градиентный заголовок «Стамбул».
+   Градиент обрезается по контуру букв через background-clip: text.
+   line-height и padding дают запас, чтобы курсив Playfair не обрезался. */
 h1 {
 	text-align: center;
 	font-style: italic;
 
-	/* Градиент: голубой → белый → золотой */
 	background: linear-gradient(135deg,
 			#4dd0ff 0%,
 			#a8e6ff 20%,
@@ -64,30 +60,22 @@ h1 {
 	background-clip: text;
 	-webkit-text-fill-color: transparent;
 	color: transparent;
-	/* fallback */
 
-	/* Свечение: drop-shadow обводит контур градиента.
-	   text-shadow не работает с прозрачным текстом. */
+	/* drop-shadow обводит контур градиента (text-shadow не работает) */
 	filter:
 		drop-shadow(0 0 10px rgba(77, 208, 255, 0.5)) drop-shadow(0 0 24px rgba(255, 184, 77, 0.3)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
 
 	margin-bottom: 20px;
-
-	/* Анимация появления */
 	opacity: 0;
 	animation: fadeInUp 1s ease 0.3s forwards;
 
-	/* Ключевое: line-height даёт воздух, padding — запас для тени */
 	line-height: 1.25;
 	padding: 0.1em 0.05em;
-
-	/* Размер: 2.5rem на мобильных → 7rem на десктопе */
 	font-size: clamp(2.5rem, 9vw, 7rem);
 	font-weight: 700;
 }
 
-/* Fallback: если background-clip: text не поддерживается —
-   показываем сплошной голубой, чтобы текст не был невидимым. */
+/* Fallback для браузеров без background-clip: text */
 @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
 	h1 {
 		color: var(--color-heading);
@@ -97,8 +85,7 @@ h1 {
 	}
 }
 
-/* H2 — заголовок дня внутри контент-блока.
-   Голубой с лёгким свечением, чтобы читался на стеклянном фоне. */
+/* H2 — заголовок дня внутри карточки. */
 .text-content h2 {
 	color: var(--color-heading);
 	text-shadow:
@@ -112,8 +99,7 @@ h1 {
 	font-weight: 500;
 }
 
-/* Абзацы лонгрида.
-   На тёмном фоне — светлый текст с тёмной подсветкой для контраста. */
+/* Абзацы: светлый текст на тёмном фоне, тёмная подсветка для контраста. */
 .text-content p {
 	margin-bottom: 16px;
 	color: var(--color-text);
@@ -132,22 +118,18 @@ h1 {
    3. КОНТЕНТ-БЛОК (КАРТОЧКА ДНЯ)
    ----------------------------------------------------------------------------
    Стеклянная панель: полупрозрачный фон + backdrop-filter: blur().
-   Сквозь карточку виден фон страницы (закат/море) и фоновые частицы.
+   Сквозь карточку виден фон страницы и фоновые частицы.
 
-   Слои внутри карточки (снизу вверх):
-     • ::before  — диагональный блик (z-index: 0)
-     • ::after   — горизонтальный блик (z-index: 0)
-     • .text-content — контент (z-index: 1) — поверх бликов
+   Слои (снизу вверх):
+     • ::before, ::after — блики (z-index: 0)
+     • .text-content     — контент (z-index: 1)
    ---------------------------------------------------------------------------- */
 .content-block {
-	/* Полупрозрачное стекло с голубым оттенком.
-	   Верх — темнее (ночь), низ — светлее (день). */
 	background: linear-gradient(180deg,
 			rgba(15, 30, 60, 0.35) 0%,
 			rgba(30, 70, 110, 0.25) 50%,
 			rgba(60, 120, 160, 0.2) 100%);
 
-	/* Матовое стекло: blur + насыщенность */
 	backdrop-filter: blur(20px) saturate(140%);
 	-webkit-backdrop-filter: blur(20px) saturate(140%);
 
@@ -156,7 +138,6 @@ h1 {
 	overflow: hidden;
 	margin-bottom: 40px;
 
-	/* Тень + светлая обводка «по краю стекла» */
 	box-shadow:
 		0 8px 32px rgba(0, 0, 0, 0.35),
 		0 2px 8px rgba(0, 0, 0, 0.2),
@@ -165,7 +146,6 @@ h1 {
 		inset 0 0 60px rgba(107, 220, 255, 0.05);
 	border: 1px solid rgba(255, 255, 255, 0.12);
 
-	/* Стартовое состояние для scroll-анимации */
 	opacity: 0;
 	transform: translateY(50px);
 	transition: opacity 0.8s ease, transform 0.8s ease;
@@ -176,21 +156,15 @@ h1 {
 
 
 /* ----------------------------------------------------------------------------
-   БЛИКИ ПО КАРТОЧКЕ
+   4. БЛИКИ ПО КАРТОЧКЕ
    ----------------------------------------------------------------------------
-   Два блика с разными параметрами:
+   Два блика:
      • ::before — медленный диагональный (30s);
-     • ::after  — более быстрый горизонтальный (20s, задержка 3s).
-   Вместе создают ощущение «живой» поверхности.
-
-   Механика:
-     • градиент задаёт узкую яркую полосу с мягкими краями;
-     • background-size больше 100% — полосе есть куда двигаться;
-     • animation сдвигает background-position;
-     • opacity: 0 в начале и конце цикла — блик «невидим» большую часть времени.
+     • ::after  — быстрый горизонтальный (20s, задержка 3s).
+   Механика: градиентная полоса сдвигается через background-position,
+   opacity: 0 в начале и конце цикла — блик невидим большую часть времени.
    ---------------------------------------------------------------------------- */
 
-/* --- Блик 1: медленный диагональный (период 30s) --- */
 .content-block::before {
 	content: '';
 	position: absolute;
@@ -209,7 +183,6 @@ h1 {
 	z-index: 0;
 }
 
-/* --- Блик 2: горизонтальный (период 20s) --- */
 .content-block::after {
 	content: '';
 	position: absolute;
@@ -267,13 +240,13 @@ h1 {
 	}
 }
 
-/* Видимое состояние (ставится JS после попадания в вьюпорт) */
+/* Видимое состояние (ставится scroll-anim.js) */
 .content-block.visible {
 	opacity: 1;
 	transform: translateY(0);
 }
 
-/* Fallback: если JS не загрузился — контент виден */
+/* Fallback: JS не загрузился — контент виден */
 .no-js .content-block {
 	opacity: 1;
 	transform: none;
@@ -281,10 +254,10 @@ h1 {
 
 
 /* ----------------------------------------------------------------------------
-   4. ТЕКСТОВЫЙ БЛОК + ОБТЕКАНИЕ КАРТИНКОЙ
+   5. ТЕКСТОВЫЙ БЛОК + ОБТЕКАНИЕ КАРТИНКОЙ
    ----------------------------------------------------------------------------
-   Главное фото дня обтекается текстом справа — «журнальная» вёрстка.
-   .text-content имеет z-index: 1 — контент поверх бликов карточки.
+   Главное фото дня обтекается текстом справа.
+   .text-content имеет z-index: 1 — контент поверх бликов.
    ---------------------------------------------------------------------------- */
 .text-content {
 	position: relative;
@@ -299,8 +272,6 @@ h1 {
 	clear: both;
 }
 
-/* Главное фото дня: прижато вправо, ширина до 45vw или 550px.
-   На стеклянном фоне — полупрозрачная «стеклянная» подложка. */
 .image-content {
 	float: right;
 	width: min(45vw, 550px);
@@ -325,28 +296,16 @@ h1 {
 
 
 /* ----------------------------------------------------------------------------
-   5. ГАЛЕРЕЯ-СКРОЛЛ
+   6. ГАЛЕРЕЯ-СКРОЛЛ
    ----------------------------------------------------------------------------
-   Горизонтальная лента миниатюр.
-
-   Стиль приведён к новой системе:
-     • фон — полупрозрачное «стекло» вместо сплошного голубого;
-     • карточки — с мягкой тенью и светлой обводкой;
-     • hover — только на устройствах с реальным hover.
-
-   Брейкпоинты по ширине миниатюры:
-     • ≥ 1200px  — 320px (4–5 карточек в ряд)
-     • 900–1199  — 280px (3–4 карточки)
-     • 600–899   — 240px (2–3 карточки)
-     • < 600     — 76vw  (одна карточка + «подглядывание» следующей)
+   Горизонтальная лента миниатюр с нативным свайпом.
+   scroll-snap — привязка к карточкам после скролла.
+   touch-action: auto — разрешает горизонтальный жест.
    ---------------------------------------------------------------------------- */
 .media-gallery {
 	position: relative;
 	width: 100%;
 	padding: 25px 20px;
-
-	/* Стеклянная подложка вместо сплошного голубого.
-	   Прозрачность 0.06 — сквозь неё виден фон страницы (закат/море). */
 	background: rgba(255, 255, 255, 0.06);
 	backdrop-filter: blur(10px);
 	-webkit-backdrop-filter: blur(10px);
@@ -354,9 +313,6 @@ h1 {
 	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Лента: flex + горизонтальный скролл.
-   scroll-snap — привязка к карточкам после скролла.
-   touch-action: auto — разрешает горизонтальный жест (свайп). */
 .gallery-container {
 	display: flex;
 	overflow-x: auto;
@@ -374,9 +330,6 @@ h1 {
 	display: none;
 }
 
-/* Одна миниатюра.
-   aspect-ratio: 4/3 — стандартные пропорции фото.
-   scroll-snap-align: start — карточка прилипает к левому краю. */
 .media-item {
 	flex: 0 0 auto;
 	width: 320px;
@@ -386,7 +339,6 @@ h1 {
 	cursor: pointer;
 	transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
 
-	/* Тень: мягкая, с лёгким голубым свечением — «парящая» карточка */
 	box-shadow:
 		0 4px 16px rgba(0, 0, 0, 0.25),
 		0 1px 4px rgba(0, 0, 0, 0.15),
@@ -397,7 +349,6 @@ h1 {
 	-webkit-tap-highlight-color: transparent;
 }
 
-/* Hover — только на устройствах с реальным hover */
 @media (hover: hover) {
 	.media-item:hover {
 		transform: translateY(-6px) scale(1.03);
@@ -427,10 +378,10 @@ h1 {
 
 
 /* ----------------------------------------------------------------------------
-   6. ЛЕНИВАЯ ЗАГРУЗКА
+   7. ЛЕНИВАЯ ЗАГРУЗКА
    ----------------------------------------------------------------------------
-   До загрузки фото показываем «скелетон» — серый градиент с бегущим бликом.
-   После загрузки JS добавляет .loaded.
+   До загрузки фото — серый скелетон с бегущим бликом.
+   После — JS добавляет .loaded.
    ---------------------------------------------------------------------------- */
 .lazy-image {
 	opacity: 0;
@@ -454,18 +405,10 @@ h1 {
 
 
 /* ----------------------------------------------------------------------------
-   7. КНОПКИ НАВИГАЦИИ ГАЛЕРЕИ (НЕ МОДАЛКИ)
+   8. КНОПКИ НАВИГАЦИИ ГАЛЕРЕИ (НЕ МОДАЛКИ)
    ----------------------------------------------------------------------------
-   Круглые кнопки ‹ › поверх ленты.
-
-   Стиль: тёмное «стекло» с голубым акцентом — сочетается с новым фоном.
-   На мобильных СКРЫТЫ (свайп достаточно) — см. @media (max-width: 599px).
-
-   Состояния:
-     • обычное        — тёмный полупрозрачный фон, светлая иконка;
-     • hover          — голубая заливка, тёмная иконка (только @media hover);
-     • .is-edge       — приглушены, когда листать некуда;
-     • :focus-visible — обводка для клавиатуры.
+   Круглые ‹ › поверх ленты. Тёмное стекло + голубой акцент при hover.
+   На мобильных скрыты (секция 14).
    ---------------------------------------------------------------------------- */
 .nav-button {
 	position: absolute;
@@ -477,7 +420,6 @@ h1 {
 	border-radius: 50%;
 	border: 1px solid rgba(255, 255, 255, 0.25);
 
-	/* Тёмное стекло — читается на любом фоне */
 	background: rgba(15, 30, 50, 0.55);
 	backdrop-filter: blur(12px);
 	-webkit-backdrop-filter: blur(12px);
@@ -522,7 +464,6 @@ h1 {
 	outline-offset: 3px;
 }
 
-/* Край ленты — приглушаем */
 .nav-button.is-edge {
 	opacity: 0.35;
 	cursor: default;
@@ -538,10 +479,10 @@ h1 {
 
 
 /* ----------------------------------------------------------------------------
-   8. YOUTUBE-ПОСТЕР В ГАЛЕРЕЕ
+   9. YOUTUBE-ПОСТЕР В ГАЛЕРЕЕ
    ----------------------------------------------------------------------------
-   Превью видео внутри ленты: картинка + красная кнопка ▶ по центру.
-   При клике открывается модалка с плеером (см. modal.js / overlay.css).
+   Превью видео: картинка + красная кнопка ▶.
+   При клике открывается модалка с плеером (modal.js).
    ---------------------------------------------------------------------------- */
 .youtube-poster {
 	position: relative;
@@ -565,8 +506,6 @@ h1 {
 	}
 }
 
-/* Красная круглая кнопка ▶ — с усиленной тенью, чтобы читалась
-   на любом превью (светлом или тёмном). */
 .video-play-button {
 	position: absolute;
 	top: 50%;
@@ -602,14 +541,213 @@ h1 {
 
 
 /* ----------------------------------------------------------------------------
-   9. АДАПТИВ
+   10. ТУМБЛЕР ФОНОВЫХ ЭФФЕКТОВ
    ----------------------------------------------------------------------------
-   Единые брейкпоинты для всей страницы:
+   Круглая кнопка в правом верхнем углу.
+   aria-pressed="true"  — эффекты включены (иконка ✦, голубая);
+   aria-pressed="false" — выключены (иконка ○, приглушена).
+   ---------------------------------------------------------------------------- */
+.effects-toggle {
+	position: fixed;
+	top: 20px;
+	right: 20px;
+	z-index: var(--z-modal-ctrl);
+
+	width: 52px;
+	height: 52px;
+	border-radius: 50%;
+	border: 1px solid rgba(255, 255, 255, 0.25);
+
+	background: rgba(15, 30, 50, 0.65);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+
+	color: #e8f4f8;
+	font-size: 22px;
+	line-height: 1;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	box-shadow:
+		0 4px 16px rgba(0, 0, 0, 0.4),
+		inset 0 1px 0 rgba(255, 255, 255, 0.1);
+	transition: opacity 0.25s ease, background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+
+	-webkit-tap-highlight-color: transparent;
+	user-select: none;
+}
+
+/* Включено — голубое свечение */
+.effects-toggle[aria-pressed="true"] {
+	color: var(--color-accent);
+	border-color: rgba(133, 227, 255, 0.5);
+	box-shadow:
+		0 4px 16px rgba(0, 0, 0, 0.4),
+		0 0 20px rgba(133, 227, 255, 0.25),
+		inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* Выключено — приглушено */
+.effects-toggle[aria-pressed="false"] {
+	color: rgba(232, 244, 248, 0.4);
+	opacity: 0.7;
+}
+
+@media (hover: hover) {
+	.effects-toggle:hover {
+		background: rgba(30, 60, 90, 0.85);
+		transform: scale(1.08);
+		box-shadow:
+			0 6px 24px rgba(0, 0, 0, 0.5),
+			0 0 24px rgba(133, 227, 255, 0.3);
+	}
+}
+
+.effects-toggle:active {
+	transform: scale(0.95);
+}
+
+.effects-toggle:focus-visible {
+	outline: 2px solid var(--color-accent);
+	outline-offset: 3px;
+}
+
+/* Иконка ✦ / ○ — плавно меняется */
+.effects-toggle__icon {
+	display: inline-block;
+	transition: transform 0.4s ease, opacity 0.3s ease;
+	font-size: 22px;
+}
+
+.effects-toggle[aria-pressed="true"] .effects-toggle__icon {
+	transform: rotate(0deg);
+	opacity: 1;
+}
+
+.effects-toggle[aria-pressed="false"] .effects-toggle__icon {
+	transform: rotate(-15deg);
+	opacity: 0.5;
+}
+
+
+/* ----------------------------------------------------------------------------
+   11. ОТКЛЮЧЕНИЕ ФОНОВЫХ ЭФФЕКТОВ (.effects-off)
+   ----------------------------------------------------------------------------
+   Класс ставится на <html> тумблером. Отключает CSS-анимации:
+     • блики на карточках;
+     • анимацию «солнечных лучей».
+   Частицы отключаются отдельно — через particles.js (canvas).
+   ---------------------------------------------------------------------------- */
+.effects-off .content-block::before,
+.effects-off .content-block::after {
+	animation: none;
+	opacity: 0;
+}
+
+.effects-off .sun-rays {
+	animation: none;
+}
+
+
+/* ----------------------------------------------------------------------------
+   12. ДОСТУПНОСТЬ: УМЕНЬШЕННАЯ АНИМАЦИЯ
+   ----------------------------------------------------------------------------
+   Пользователь просил меньше движения — отключаем блики, hover-эффекты,
+   плавный скролл. Глобальное правило есть в base.css, здесь — точечные
+   правки для элементов этой страницы.
+   ---------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+
+	.content-block::before,
+	.content-block::after {
+		animation: none;
+		opacity: 0;
+	}
+
+	.media-item,
+	.media-item img,
+	.nav-button,
+	.youtube-poster img,
+	.effects-toggle,
+	.effects-toggle__icon {
+		transition: none;
+	}
+
+	.gallery-container {
+		scroll-behavior: auto;
+	}
+}
+
+
+/* ----------------------------------------------------------------------------
+   13. ПЕЧАТЬ
+   ----------------------------------------------------------------------------
+   На бумаге тёмный фон и тени не нужны — переводим в ч/б,
+   убираем анимации и интерактив.
+   ---------------------------------------------------------------------------- */
+@media print {
+	body {
+		background: white;
+	}
+
+	.content-block {
+		background: white;
+		box-shadow: none;
+		opacity: 1;
+		transform: none;
+		border: 1px solid #ddd;
+		border-radius: 0;
+		margin-bottom: 20px;
+		padding: 15px;
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+	}
+
+	.content-block::before,
+	.content-block::after {
+		display: none;
+	}
+
+	h1,
+	.text-content h2,
+	.text-content p {
+		color: black;
+		text-shadow: none;
+		-webkit-text-fill-color: currentColor;
+		filter: none;
+		background: none;
+	}
+
+	.image-content {
+		float: none;
+		width: 100%;
+		max-width: 100%;
+		margin: 15px 0;
+		border: 1px solid #ccc;
+		box-shadow: none;
+	}
+
+	.media-gallery,
+	.nav-button,
+	.video-play-button,
+	.effects-toggle {
+		display: none;
+	}
+}
+
+
+/* ============================================================================
+   14. БРЕЙКПОИНТЫ
+   ----------------------------------------------------------------------------
+   Все @media (max-width / max-height) — в одном месте, по убыванию ширины.
+   Единые для всей страницы:
      • ≤ 1199px — ноутбук / планшет-ландшафт
      • ≤ 899px  — планшет-портрет
-     • ≤ 599px  — мобильный (стрелки карусели скрыты)
+     • ≤ 599px  — мобильный (стрелки галереи скрыты)
      • ≤ 380px  — очень узкий (iPhone SE)
-   ---------------------------------------------------------------------------- */
+   ============================================================================ */
 
 /* --- ≤ 1199px: ноутбук / планшет-ландшафт --- */
 @media (max-width: 1199px) {
@@ -634,7 +772,6 @@ h1 {
 		margin-bottom: 30px;
 		padding: 20px;
 		border-radius: var(--radius-md);
-		/* На планшете blur меньше — экономим GPU */
 		backdrop-filter: blur(14px) saturate(130%);
 		-webkit-backdrop-filter: blur(14px) saturate(130%);
 	}
@@ -643,8 +780,7 @@ h1 {
 		padding: 20px 15px;
 	}
 
-	/* На планшете и меньше обтекание отключаем:
-	   картинка встаёт по центру, текст читается комфортнее. */
+	/* Обтекание отключаем — картинка по центру */
 	.image-content {
 		float: none;
 		width: 100%;
@@ -684,9 +820,7 @@ h1 {
 	}
 }
 
-/* --- ≤ 599px: мобильный ---
-   Стрелки карусели скрыты — свайп достаточно.
-   Миниатюры 76vw — видна одна карточка + «подглядывание» следующей. */
+/* --- ≤ 599px: мобильный --- */
 @media (max-width: 599px) {
 	.container {
 		padding: 0 12px;
@@ -696,7 +830,6 @@ h1 {
 		margin-bottom: 25px;
 		padding: 15px;
 		border-radius: 10px;
-		/* На мобильных blur отключаем — GPU слабее, эффект почти не виден */
 		backdrop-filter: none;
 		-webkit-backdrop-filter: none;
 		background: rgba(15, 30, 60, 0.55);
@@ -716,7 +849,6 @@ h1 {
 		padding: 0 10px;
 	}
 
-	/* На узких экранах увеличиваем межстрочный интервал для читаемости */
 	.text-content p {
 		font-size: clamp(0.9rem, 3vw, 1.2rem);
 		line-height: 1.55;
@@ -742,7 +874,7 @@ h1 {
 		border-radius: 10px;
 	}
 
-	/* СТРЕЛКИ СКРЫТЫ — свайп достаточно */
+	/* Стрелки галереи скрыты — свайп достаточно */
 	.nav-button {
 		display: none !important;
 	}
@@ -750,6 +882,15 @@ h1 {
 	.video-play-button {
 		width: 60px;
 		height: 60px;
+		font-size: 20px;
+	}
+
+	/* Тумблер меньше, но удобный для пальца */
+	.effects-toggle {
+		top: 15px;
+		right: 15px;
+		width: 46px;
+		height: 46px;
 		font-size: 20px;
 	}
 }
@@ -766,259 +907,15 @@ h1 {
 }
 
 
-/* ----------------------------------------------------------------------------
-   10. HIDPI: ТОНКАЯ ПОДСТРОЙКА
+/* ============================================================================
+   15. HIDPI
    ----------------------------------------------------------------------------
    На экранах с высокой плотностью пикселей микро-тени текста
    могут выглядеть «жирнее». Уменьшаем их для чёткости.
-   ---------------------------------------------------------------------------- */
+   ============================================================================ */
 @media (-webkit-min-device-pixel-ratio: 2),
 (min-resolution: 192dpi) {
 	.text-content p {
 		text-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.35);
 	}
-}
-
-
-/* ----------------------------------------------------------------------------
-   11. ДОСТУПНОСТЬ: УМЕНЬШЕННАЯ АНИМАЦИЯ
-   ----------------------------------------------------------------------------
-   Пользователь просил меньше движения — отключаем блики, hover-эффекты,
-   плавный скролл. Глобальное правило есть в base.css, здесь — точечные
-   правки для элементов этой страницы.
-   ---------------------------------------------------------------------------- */
-@media (prefers-reduced-motion: reduce) {
-
-	.content-block::before,
-	.content-block::after {
-		animation: none;
-		opacity: 0;
-	}
-
-	.media-item,
-	.media-item img,
-	.nav-button,
-	.youtube-poster img {
-		transition: none;
-	}
-
-	.gallery-container {
-		scroll-behavior: auto;
-	}
-}
-
-
-/* ----------------------------------------------------------------------------
-   12. ПЕЧАТЬ
-   ----------------------------------------------------------------------------
-   На бумаге тёмный фон и тени не нужны — переводим в ч/б,
-   убираем анимации и интерактив, чтобы страница читалась как статья.
-   ---------------------------------------------------------------------------- */
-@media print {
-	body {
-		background: white;
-	}
-
-	.content-block {
-		background: white;
-		box-shadow: none;
-		opacity: 1;
-		transform: none;
-		border: 1px solid #ddd;
-		border-radius: 0;
-		margin-bottom: 20px;
-		padding: 15px;
-		backdrop-filter: none;
-		-webkit-backdrop-filter: none;
-	}
-
-	/* Блики не печатаем */
-	.content-block::before,
-	.content-block::after {
-		display: none;
-	}
-
-	h1,
-	.text-content h2,
-	.text-content p {
-		color: black;
-		text-shadow: none;
-		-webkit-text-fill-color: currentColor;
-		filter: none;
-		background: none;
-	}
-
-	.image-content {
-		float: none;
-		width: 100%;
-		max-width: 100%;
-		margin: 15px 0;
-		border: 1px solid #ccc;
-		box-shadow: none;
-	}
-
-	/* Интерактив на бумаге бесполезен — скрываем */
-	.media-gallery,
-	.nav-button,
-	.video-play-button {
-		display: none;
-	}
-}
-
-/* ----------------------------------------------------------------------------
-   13. ТУМБЛЕР ФОНОВЫХ ЭФФЕКТОВ
-   ----------------------------------------------------------------------------
-   Круглая кнопка в правом верхнем углу. Включает/выключает фоновые частицы.
-
-   Стиль: тёмное стекло + голубой акцент — единый с навигацией.
-   Состояния:
-     • aria-pressed="true"  — эффекты включены (иконка яркая, голубая);
-     • aria-pressed="false" — выключены (иконка приглушена, серая).
-   ---------------------------------------------------------------------------- */
-.effects-toggle {
-	position: fixed;
-	top: 20px;
-	right: 20px;
-	z-index: var(--z-modal-ctrl);
-	/* поверх контента, но под модалкой */
-
-	width: 52px;
-	height: 52px;
-	border-radius: 50%;
-	border: 1px solid rgba(255, 255, 255, 0.25);
-
-	/* Тёмное стекло */
-	background: rgba(15, 30, 50, 0.65);
-	backdrop-filter: blur(12px);
-	-webkit-backdrop-filter: blur(12px);
-
-	color: #e8f4f8;
-	font-size: 22px;
-	line-height: 1;
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	box-shadow:
-		0 4px 16px rgba(0, 0, 0, 0.4),
-		inset 0 1px 0 rgba(255, 255, 255, 0.1);
-	transition: opacity 0.25s ease, background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease, color 0.25s ease, border-color 0.25s ease;
-
-	-webkit-tap-highlight-color: transparent;
-	user-select: none;
-}
-
-/* Включено — голубое свечение, иконка яркая */
-.effects-toggle[aria-pressed="true"] {
-	color: var(--color-accent);
-	border-color: rgba(133, 227, 255, 0.5);
-	box-shadow:
-		0 4px 16px rgba(0, 0, 0, 0.4),
-		0 0 20px rgba(133, 227, 255, 0.25),
-		inset 0 1px 0 rgba(255, 255, 255, 0.15);
-}
-
-/* Выключено — иконка приглушена, серая */
-.effects-toggle[aria-pressed="false"] {
-	color: rgba(232, 244, 248, 0.4);
-	opacity: 0.7;
-}
-
-@media (hover: hover) {
-	.effects-toggle:hover {
-		background: rgba(30, 60, 90, 0.85);
-		transform: scale(1.08);
-		box-shadow:
-			0 6px 24px rgba(0, 0, 0, 0.5),
-			0 0 24px rgba(133, 227, 255, 0.3);
-	}
-}
-
-.effects-toggle:active {
-	transform: scale(0.95);
-}
-
-.effects-toggle:focus-visible {
-	outline: 2px solid var(--color-accent);
-	outline-offset: 3px;
-}
-
-/* Иконка ✦ — плавно поворачивается при переключении */
-.effects-toggle__icon {
-	display: inline-block;
-	transition: transform 0.4s ease;
-}
-
-.effects-toggle[aria-pressed="true"] .effects-toggle__icon {
-	transform: rotate(0deg);
-}
-
-.effects-toggle[aria-pressed="false"] .effects-toggle__icon {
-	transform: rotate(45deg) scale(0.85);
-}
-
-/* ----------------------------------------------------------------------------
-   ОТКЛЮЧЕНИЕ ФОНОВЫХ ЭФФЕКТОВ (тумблер)
-   ----------------------------------------------------------------------------
-   Класс .effects-off ставится на <html>, когда пользователь выключил
-   фоновые эффекты тумблером. Отключает:
-     • блики на карточках (sunBeamDiagonal, sunBeamHorizontal);
-     • анимацию «солнечных лучей» (.sun-rays).
-   Частицы отключаются отдельно — через particles.js (canvas).
-   ---------------------------------------------------------------------------- */
-.effects-off .content-block::before,
-.effects-off .content-block::after {
-	animation: none;
-	opacity: 0;
-}
-
-.effects-off .sun-rays {
-	animation: none;
-}
-
-/* На мобильных кнопка меньше, но удобная для пальца */
-@media (max-width: 599px) {
-	.effects-toggle {
-		top: 15px;
-		right: 15px;
-		width: 46px;
-		height: 46px;
-		font-size: 20px;
-	}
-}
-
-/* Печать — скрываем */
-@media print {
-	.effects-toggle {
-		display: none;
-	}
-}
-
-/* prefers-reduced-motion — без анимаций */
-@media (prefers-reduced-motion: reduce) {
-
-	.effects-toggle,
-	.effects-toggle__icon {
-		transition: none;
-	}
-}
-
-/* Иконка ✦ / ○ — плавно меняется */
-.effects-toggle__icon {
-	display: inline-block;
-	transition: transform 0.4s ease, opacity 0.3s ease;
-	font-size: 22px;
-}
-
-/* ON — иконка яркая, не повёрнута */
-.effects-toggle[aria-pressed="true"] .effects-toggle__icon {
-	transform: rotate(0deg);
-	opacity: 1;
-}
-
-/* OFF — иконка тусклая, чуть повёрнута */
-.effects-toggle[aria-pressed="false"] .effects-toggle__icon {
-	transform: rotate(-15deg);
-	opacity: 0.5;
 }
