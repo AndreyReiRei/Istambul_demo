@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" class="no-js">
 
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Istanbul</title>
+	<title>Стамбул — неделя на берегах Босфора</title>
+
+	<meta name="description"
+		content="Дневник путешествия: семь дней в Стамбуле — Босфор, Айя-София, Голубая мечеть, Галатская башня, базары и уличная еда.">
 
 	<!-- Playfair Display + система -->
 	<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,7 +15,10 @@
 	<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
 		rel="stylesheet">
 
-	<link rel="stylesheet" href="/css/style.css">
+	<!-- Стили: порядок важен — base → main → overlay -->
+	<link rel="stylesheet" href="/css/base.css">
+	<link rel="stylesheet" href="/css/main.css">
+	<link rel="stylesheet" href="/css/overlay.css">
 </head>
 
 <body>
@@ -20,13 +26,15 @@
 	<div class="container">
 		<h1>Стамбул</h1>
 
-		<!-- Блок 1 -->
-		<section class="content-block">
+		<!-- ============================================================
+		     БЛОК 1 — День первый
+		     ============================================================ -->
+		<section class="content-block" id="day-1">
 			<div class="text-content">
 				<h2>По рельсам, по шпалам — и в небо!</h2>
 				<div class="image-content">
-					<img src="/img/placeholder.jpg" data-src="/img/days_1/img_1.jpg" alt="День первый" loading="lazy"
-						class="lazy-image">
+					<img src="/img/placeholder.jpg" data-src="/img/days_1/img_1.jpg"
+						alt="Ночной поезд и предрассветный вокзал" class="lazy-image">
 				</div>
 				<p>Путешествие началось в ритмичном перестуке колёс ночного поезда, убаюкивающем и уносящем прочь
 					заботы. Этот стук сменился предрассветной суетой вокзала, где нас сразу же, словно стая шумных птиц,
@@ -66,69 +74,69 @@
 
 				<p>Первый день закончился не разочарованием, а сладким предвкушением. Мы лишь прикоснулись к этому
 					городу, а он уже начал с нами свой тихий, загадочный диалог.</p>
-
 			</div>
 
 			<div class="media-gallery">
 				<div class="gallery-container">
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_1/img_2.jpg" alt="День первый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_1/img_2.jpg"
+							alt="Стамбул, день первый — фото 2" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_1/img_3.jpg" alt="День первый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_1/img_3.jpg"
+							alt="Стамбул, день первый — фото 3" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_1/img_4.jpg" alt="День первый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_1/img_4.jpg"
+							alt="Стамбул, день первый — фото 4" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_1/img_9.jpg" alt="День первый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_1/img_9.jpg"
+							alt="Стамбул, день первый — фото 5" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_1/img_10.jpg" alt="День первый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_1/img_10.jpg"
+							alt="Стамбул, день первый — фото 6" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_1/img_5.jpg" alt="День первый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_1/img_5.jpg"
+							alt="Стамбул, день первый — фото 7" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_1/img_6.jpg" alt="День первый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_1/img_6.jpg"
+							alt="Стамбул, день первый — фото 8" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_1/img_7.jpg" alt="День первый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_1/img_7.jpg"
+							alt="Стамбул, день первый — фото 9" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_1/img_8.jpg" alt="День первый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_1/img_8.jpg"
+							alt="Стамбул, день первый — фото 10" class="lazy-image">
 					</div>
 
-
+					<!-- YouTube: превью подтягивается автоматически по data-youtube-id. -->
 					<div class="media-item">
 						<div class="youtube-poster" data-youtube-id="fyT-RQFU8ik">
-							<img src="/img/video-poster.jpg" alt="YouTube видео" class="lazy-image">
+							<img src="https://img.youtube.com/vi/fyT-RQFU8ik/hqdefault.jpg"
+								alt="Видео: первый день в Стамбуле" loading="lazy">
 							<div class="video-play-button">▶</div>
 						</div>
 					</div>
-
-
 				</div>
-				<button class="nav-button prev">‹</button>
-				<button class="nav-button next">›</button>
+				<button class="nav-button prev" aria-label="Предыдущие фото">‹</button>
+				<button class="nav-button next" aria-label="Следующие фото">›</button>
 			</div>
 		</section>
 
-		<!-- Блок 2 -->
-		<section class="content-block">
+		<!-- ============================================================
+		     БЛОК 2 — День второй
+		     ============================================================ -->
+		<section class="content-block" id="day-2">
 			<div class="text-content">
 				<h2>Бриз Босфора, дыхание древности и жареные каштаны.</h2>
 				<div class="image-content">
-					<img src="/img/placeholder.jpg" data-src="/img/days_2/img_1.jpg" alt="День второй" loading="lazy"
+					<img src="/img/placeholder.jpg" data-src="/img/days_2/img_1.jpg" alt="Набережная Босфора утром"
 						class="lazy-image">
 				</div>
 
@@ -163,73 +171,75 @@
 			<div class="media-gallery">
 				<div class="gallery-container">
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_2/img_2.jpg" alt="День 2" loading="lazy"
-							class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_2/img_2.jpg"
+							alt="Стамбул, день второй — фото 2" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_2/img_3.jpg" alt="День 2" loading="lazy"
-							class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_2/img_3.jpg"
+							alt="Стамбул, день второй — фото 3" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_2/img_4.jpg" alt="День 2" loading="lazy"
-							class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_2/img_4.jpg"
+							alt="Стамбул, день второй — фото 4" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_2/img_6.1.jpg" alt="День 2" loading="lazy"
-							class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_2/img_6.1.jpg"
+							alt="Стамбул, день второй — фото 5" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_2/img_5.jpg" alt="День 2" loading="lazy"
-							class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_2/img_5.jpg"
+							alt="Стамбул, день второй — фото 6" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_2/img_6.jpg" alt="День 2" loading="lazy"
-							class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_2/img_6.jpg"
+							alt="Стамбул, день второй — фото 7" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_2/img_7.jpg" alt="День 2" loading="lazy"
-							class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_2/img_7.jpg"
+							alt="Стамбул, день второй — фото 8" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_2/img_8.jpg" alt="День 2" loading="lazy"
-							class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_2/img_8.jpg"
+							alt="Стамбул, день второй — фото 9" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_2/img_9.jpg" alt="День 2" loading="lazy"
-							class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_2/img_9.jpg"
+							alt="Стамбул, день второй — фото 10" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_2/img_10.jpg" alt="День 2" loading="lazy"
-							class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_2/img_10.jpg"
+							alt="Стамбул, день второй — фото 11" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_2/img_11.jpg" alt="День 2" loading="lazy"
-							class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_2/img_11.jpg"
+							alt="Стамбул, день второй — фото 12" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_2/img_12.jpg" alt="День 2" loading="lazy"
-							class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_2/img_12.jpg"
+							alt="Стамбул, день второй — фото 13" class="lazy-image">
 					</div>
 
 					<div class="media-item">
-						<div class="youtube-poster" data-youtube-id="fyT-RQFU8ik">
-							<img src="/img/video-poster.jpg" alt="YouTube видео" class="lazy-image">
+						<div class="youtube-poster" data-youtube-id="UCJvXX1nJr8">
+							<img src="https://img.youtube.com/vi/UCJvXX1nJr8/hqdefault.jpg"
+								alt="Видео: второй день в Стамбуле" loading="lazy">
 							<div class="video-play-button">▶</div>
 						</div>
 					</div>
-
 				</div>
-				<button class="nav-button prev">‹</button>
-				<button class="nav-button next">›</button>
+				<button class="nav-button prev" aria-label="Предыдущие фото">‹</button>
+				<button class="nav-button next" aria-label="Следующие фото">›</button>
 			</div>
 		</section>
 
-		<!-- Блок 3 -->
-		<section class="content-block">
+		<!-- ============================================================
+		     БЛОК 3 — День третий
+		     ============================================================ -->
+		<section class="content-block" id="day-3">
 			<div class="text-content">
 				<h2>Дворцы, храмы и морской бриз.</h2>
 				<div class="image-content">
-					<img src="/img/placeholder.jpg" data-src="/img/days_3/img_1.jpg" alt="День третий" loading="lazy"
+					<img src="/img/placeholder.jpg" data-src="/img/days_3/img_1.jpg" alt="Дворец Топкапы и Айя-София"
 						class="lazy-image">
 				</div>
 
@@ -258,7 +268,7 @@
 				<p>Палящий зной сменился ласковым бризом, который трепал волосы и приносил прохладу. Мы с восторгом
 					наблюдали, как с воды проплывает весь Стамбул, как на роскошной театральной сцене: вот мечети
 					поднимают к небу свои иглы-минареты, вот старинные деревянные особняки-ялы теснятся у самой воды,
-					флаги на берегу весело трепетали на ветру, а вода переливалась на солнце тысячами бликов. </p>
+					флаги на берегу весело трепетали на ветру, а вода переливалась на солнце тысячами бликов.</p>
 
 				<p>Этот день был похож на идеально приготовленный турецкий кофе — крепкий, с горьковатой ноткой истории
 					и с безумно сладким, освежающим послевкусием морской прогулки.</p>
@@ -266,110 +276,112 @@
 			<div class="media-gallery">
 				<div class="gallery-container">
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_2.jpg" alt="День третий"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_2.jpg"
+							alt="Стамбул, день третий — фото 2" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_3.jpg" alt="День третий"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_3.jpg"
+							alt="Стамбул, день третий — фото 3" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_4.jpg" alt="День третий"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_4.jpg"
+							alt="Стамбул, день третий — фото 4" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_5.jpg" alt="День третий"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_5.jpg"
+							alt="Стамбул, день третий — фото 5" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_6.jpg" alt="День третий"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_6.jpg"
+							alt="Стамбул, день третий — фото 6" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_7.jpg" alt="День третий"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_7.jpg"
+							alt="Стамбул, день третий — фото 7" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_8.jpg" alt="День третий"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_8.jpg"
+							alt="Стамбул, день третий — фото 8" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_9.jpg" alt="День третий"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_9.jpg"
+							alt="Стамбул, день третий — фото 9" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_10.jpg" alt="День третий"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_10.jpg"
+							alt="Стамбул, день третий — фото 10" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_11.jpg" alt="День третий"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_11.jpg"
+							alt="Стамбул, день третий — фото 11" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_12.jpg" alt="День третий"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_12.jpg"
+							alt="Стамбул, день третий — фото 12" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_13.jpg" alt="День третий"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_13.jpg"
+							alt="Стамбул, день третий — фото 13" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_14.jpg" alt="День третий"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_14.jpg"
+							alt="Стамбул, день третий — фото 14" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_15.jpg" alt="День третий"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_15.jpg"
+							alt="Стамбул, день третий — фото 15" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_16.jpg" alt="День третий"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_16.jpg"
+							alt="Стамбул, день третий — фото 16" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_17.jpg" alt="День третий"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_17.jpg"
+							alt="Стамбул, день третий — фото 17" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_18.jpg" alt="День третий"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_18.jpg"
+							alt="Стамбул, день третий — фото 18" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_19.jpg" alt="День третий"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_19.jpg"
+							alt="Стамбул, день третий — фото 19" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_20.jpg" alt="День третий"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_20.jpg"
+							alt="Стамбул, день третий — фото 20" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_21.jpg" alt="День третий"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_21.jpg"
+							alt="Стамбул, день третий — фото 21" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_22.jpg" alt="День третий"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_3/img_22.jpg"
+							alt="Стамбул, день третий — фото 22" class="lazy-image">
 					</div>
 
 					<div class="media-item">
-						<div class="youtube-poster" data-youtube-id="fyT-RQFU8ik">
-							<img src="/img/video-poster.jpg" alt="YouTube видео" class="lazy-image">
+						<div class="youtube-poster" data-youtube-id="caIn8_6_TeI">
+							<img src="https://img.youtube.com/vi/caIn8_6_TeI/hqdefault.jpg"
+								alt="Видео: третий день в Стамбуле" loading="lazy">
 							<div class="video-play-button">▶</div>
 						</div>
 					</div>
-
 				</div>
-				<button class="nav-button prev">‹</button>
-				<button class="nav-button next">›</button>
+				<button class="nav-button prev" aria-label="Предыдущие фото">‹</button>
+				<button class="nav-button next" aria-label="Следующие фото">›</button>
 			</div>
 		</section>
 
-		<!-- Блок 4 -->
-		<section class="content-block">
+		<!-- ============================================================
+		     БЛОК 4 — День четвёртый
+		     ============================================================ -->
+		<section class="content-block" id="day-4">
 			<div class="text-content">
 				<h2>Свиток османского наследия: от Султанахмет до Сулеймание.</h2>
 				<div class="image-content">
-					<img src="/img/placeholder.jpg" data-src="/img/days_4/img_1.jpg" alt="День четвертый" loading="lazy"
-						class="lazy-image">
+					<img src="/img/placeholder.jpg" data-src="/img/days_4/img_1.jpg"
+						alt="Голубая мечеть — интерьер с изразцами" class="lazy-image">
 				</div>
 
 				<p>И вот мы предстали перед ней — не просто мечетью, а воплощением дерзкой мечты юного султана Ахмеда I,
@@ -405,76 +417,76 @@
 
 				<p>Завершился этот день, послевкусием сакральных смыслов, от высокого духовного парения
 					— к простой, земной и такой же вечной красоте жизни Стамбула.</p>
-
-
 			</div>
 			<div class="media-gallery">
 				<div class="gallery-container">
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_4/img_2.jpg" alt="День четвертый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_4/img_2.jpg"
+							alt="Стамбул, день четвёртый — фото 2" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_4/img_3.jpg" alt="День четвертый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_4/img_3.jpg"
+							alt="Стамбул, день четвёртый — фото 3" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_4/img_4.jpg" alt="День четвертый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_4/img_4.jpg"
+							alt="Стамбул, день четвёртый — фото 4" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_4/img_5.jpg" alt="День четвертый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_4/img_5.jpg"
+							alt="Стамбул, день четвёртый — фото 5" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_4/img_6.jpg" alt="День четвертый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_4/img_6.jpg"
+							alt="Стамбул, день четвёртый — фото 6" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_4/img_7.jpg" alt="День четвертый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_4/img_7.jpg"
+							alt="Стамбул, день четвёртый — фото 7" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_4/img_8.jpg" alt="День четвертый"
-							loading="lazy" class="lazy-image">
-					</div>
-
-					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_4/img_11.jpg" alt="День четвертый"
-							loading="lazy" class="lazy-image">
-					</div>
-					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_4/img_12.jpg" alt="День четвертый"
-							loading="lazy" class="lazy-image">
-					</div>
-					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_4/img_13.jpg" alt="День четвертый"
-							loading="lazy" class="lazy-image">
-					</div>
-					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_4/img_14.jpg" alt="День четвертый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_4/img_8.jpg"
+							alt="Стамбул, день четвёртый — фото 8" class="lazy-image">
 					</div>
 
 					<div class="media-item">
-						<div class="youtube-poster" data-youtube-id="fyT-RQFU8ik">
-							<img src="/img/video-poster.jpg" alt="YouTube видео" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_4/img_11.jpg"
+							alt="Стамбул, день четвёртый — фото 9" class="lazy-image">
+					</div>
+					<div class="media-item">
+						<img src="/img/placeholder.jpg" data-src="/img/days_4/img_12.jpg"
+							alt="Стамбул, день четвёртый — фото 10" class="lazy-image">
+					</div>
+					<div class="media-item">
+						<img src="/img/placeholder.jpg" data-src="/img/days_4/img_13.jpg"
+							alt="Стамбул, день четвёртый — фото 11" class="lazy-image">
+					</div>
+					<div class="media-item">
+						<img src="/img/placeholder.jpg" data-src="/img/days_4/img_14.jpg"
+							alt="Стамбул, день четвёртый — фото 12" class="lazy-image">
+					</div>
+
+					<div class="media-item">
+						<div class="youtube-poster" data-youtube-id="Lry88baZYfw">
+							<img src="https://img.youtube.com/vi/Lry88baZYfw/hqdefault.jpg"
+								alt="Видео: четвёртый день в Стамбуле" loading="lazy">
 							<div class="video-play-button">▶</div>
 						</div>
 					</div>
-
 				</div>
-				<button class="nav-button prev">‹</button>
-				<button class="nav-button next">›</button>
+				<button class="nav-button prev" aria-label="Предыдущие фото">‹</button>
+				<button class="nav-button next" aria-label="Следующие фото">›</button>
 			</div>
 		</section>
 
-		<!-- Блок 5 -->
-		<section class="content-block">
+		<!-- ============================================================
+		     БЛОК 5 — День пятый
+		     ============================================================ -->
+		<section class="content-block" id="day-5">
 			<div class="text-content">
 				<h2>От башни-исполина до балык-экмека.</h2>
 				<div class="image-content">
-					<img src="/img/placeholder.jpg" data-src="/img/days_5/img_1.jpg" alt="День пятый" loading="lazy"
+					<img src="/img/placeholder.jpg" data-src="/img/days_5/img_1.jpg" alt="Галатская башня на рассвете"
 						class="lazy-image">
 				</div>
 
@@ -518,113 +530,115 @@
 			<div class="media-gallery">
 				<div class="gallery-container">
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_2.jpg" alt="День пятый" loading="lazy"
-							class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_2.jpg"
+							alt="Стамбул, день пятый — фото 2" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_3.jpg" alt="День пятый" loading="lazy"
-							class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_3.jpg"
+							alt="Стамбул, день пятый — фото 3" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_4.jpg" alt="День пятый" loading="lazy"
-							class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_4.jpg"
+							alt="Стамбул, день пятый — фото 4" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_5.jpg" alt="День пятый" loading="lazy"
-							class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_5.jpg"
+							alt="Стамбул, день пятый — фото 5" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_6.jpg" alt="День пятый" loading="lazy"
-							class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_6.jpg"
+							alt="Стамбул, день пятый — фото 6" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_7.jpg" alt="День пятый" loading="lazy"
-							class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_7.jpg"
+							alt="Стамбул, день пятый — фото 7" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_8.jpg" alt="День пятый" loading="lazy"
-							class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_8.jpg"
+							alt="Стамбул, день пятый — фото 8" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_9.jpg" alt="День пятый" loading="lazy"
-							class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_9.jpg"
+							alt="Стамбул, день пятый — фото 9" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_10.jpg" alt="День пятый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_10.jpg"
+							alt="Стамбул, день пятый — фото 10" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_11.jpg" alt="День пятый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_11.jpg"
+							alt="Стамбул, день пятый — фото 11" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_12.jpg" alt="День пятый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_12.jpg"
+							alt="Стамбул, день пятый — фото 12" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_13.jpg" alt="День пятый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_13.jpg"
+							alt="Стамбул, день пятый — фото 13" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_14.jpg" alt="День пятый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_14.jpg"
+							alt="Стамбул, день пятый — фото 14" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_15.jpg" alt="День пятый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_15.jpg"
+							alt="Стамбул, день пятый — фото 15" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_16.jpg" alt="День пятый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_16.jpg"
+							alt="Стамбул, день пятый — фото 16" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_17.jpg" alt="День пятый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_17.jpg"
+							alt="Стамбул, день пятый — фото 17" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_18.jpg" alt="День пятый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_18.jpg"
+							alt="Стамбул, день пятый — фото 18" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_19.jpg" alt="День пятый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_19.jpg"
+							alt="Стамбул, день пятый — фото 19" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_20.jpg" alt="День пятый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_20.jpg"
+							alt="Стамбул, день пятый — фото 20" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_21.jpg" alt="День пятый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_21.jpg"
+							alt="Стамбул, день пятый — фото 21" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_22.jpg" alt="День пятый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_22.jpg"
+							alt="Стамбул, день пятый — фото 22" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_23.jpg" alt="День пятый"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_5/img_23.jpg"
+							alt="Стамбул, день пятый — фото 23" class="lazy-image">
 					</div>
 
 					<div class="media-item">
-						<div class="youtube-poster" data-youtube-id="fyT-RQFU8ik">
-							<img src="/img/video-poster.jpg" alt="YouTube видео" class="lazy-image">
+						<div class="youtube-poster" data-youtube-id="iw7oRkXL7NU">
+							<img src="https://img.youtube.com/vi/iw7oRkXL7NU/hqdefault.jpg"
+								alt="Видео: пятый день в Стамбуле" loading="lazy">
 							<div class="video-play-button">▶</div>
 						</div>
 					</div>
-
 				</div>
-				<button class="nav-button prev">‹</button>
-				<button class="nav-button next">›</button>
+				<button class="nav-button prev" aria-label="Предыдущие фото">‹</button>
+				<button class="nav-button next" aria-label="Следующие фото">›</button>
 			</div>
 		</section>
 
-		<!-- блок 6 -->
-		<section class="content-block">
+		<!-- ============================================================
+		     БЛОК 6 — День шестой
+		     ============================================================ -->
+		<section class="content-block" id="day-6">
 			<div class="text-content">
 				<h2>От разноцветной сказки до великих византийских сооружений.</h2>
 				<div class="image-content">
-					<img src="/img/placeholder.jpg" data-src="/img/days_6/img_1.jpg" alt="День шестой" loading="lazy"
+					<img src="/img/placeholder.jpg" data-src="/img/days_6/img_1.jpg" alt="Разноцветные дома Балата"
 						class="lazy-image">
 				</div>
 				<p>Наш путь в этот день лежал не просто в новый район, а в живую палитру, где история говорит языком
@@ -669,131 +683,132 @@
 					«жизнедеятельности», чем-то смиренно напомнив нам о вечном круговороте и простых радостях бытия.
 					Поднявшись наверх, мы прошлись вдоль древних стен, и в тишине угасающего дня нам почудился далекий
 					шепот веков — то ли ветер в развалинах, то ли эхо шагов по пустому резервуару.</p>
-
 			</div>
 			<div class="media-gallery">
 				<div class="gallery-container">
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_2.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_2.jpg"
+							alt="Стамбул, день шестой — фото 2" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_3.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_3.jpg"
+							alt="Стамбул, день шестой — фото 3" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_4.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_4.jpg"
+							alt="Стамбул, день шестой — фото 4" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_5.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_5.jpg"
+							alt="Стамбул, день шестой — фото 5" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_6.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_6.jpg"
+							alt="Стамбул, день шестой — фото 6" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_7.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_7.jpg"
+							alt="Стамбул, день шестой — фото 7" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_8.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_8.jpg"
+							alt="Стамбул, день шестой — фото 8" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_9.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_9.jpg"
+							alt="Стамбул, день шестой — фото 9" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_10.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_10.jpg"
+							alt="Стамбул, день шестой — фото 10" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_11.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_11.jpg"
+							alt="Стамбул, день шестой — фото 11" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_12.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_12.jpg"
+							alt="Стамбул, день шестой — фото 12" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_12.1.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_12.1.jpg"
+							alt="Стамбул, день шестой — фото 13" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_13.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_13.jpg"
+							alt="Стамбул, день шестой — фото 14" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_14.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_14.jpg"
+							alt="Стамбул, день шестой — фото 15" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_15.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_15.jpg"
+							alt="Стамбул, день шестой — фото 16" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_16.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_16.jpg"
+							alt="Стамбул, день шестой — фото 17" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_17.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_17.jpg"
+							alt="Стамбул, день шестой — фото 18" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_18.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_18.jpg"
+							alt="Стамбул, день шестой — фото 19" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_19.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_19.jpg"
+							alt="Стамбул, день шестой — фото 20" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_20.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_20.jpg"
+							alt="Стамбул, день шестой — фото 21" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_21.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_21.jpg"
+							alt="Стамбул, день шестой — фото 22" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_22.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_22.jpg"
+							alt="Стамбул, день шестой — фото 23" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_23.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_23.jpg"
+							alt="Стамбул, день шестой — фото 24" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_24.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_24.jpg"
+							alt="Стамбул, день шестой — фото 25" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_25.jpg" alt="День шестой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_6/img_25.jpg"
+							alt="Стамбул, день шестой — фото 26" class="lazy-image">
 					</div>
 
 					<div class="media-item">
-						<div class="youtube-poster" data-youtube-id="fyT-RQFU8ik">
-							<img src="/img/video-poster.jpg" alt="YouTube видео" class="lazy-image">
+						<div class="youtube-poster" data-youtube-id="7xrwnTqMyzM">
+							<img src="https://img.youtube.com/vi/7xrwnTqMyzM/hqdefault.jpg"
+								alt="Видео: шестой день в Стамбуле" loading="lazy">
 							<div class="video-play-button">▶</div>
 						</div>
 					</div>
-
 				</div>
-				<button class="nav-button prev">‹</button>
-				<button class="nav-button next">›</button>
+				<button class="nav-button prev" aria-label="Предыдущие фото">‹</button>
+				<button class="nav-button next" aria-label="Следующие фото">›</button>
 			</div>
 		</section>
 
-		<!-- блок 7 -->
-		<section class="content-block">
+		<!-- ============================================================
+		     БЛОК 7 — День седьмой
+		     ============================================================ -->
+		<section class="content-block" id="day-7">
 			<div class="text-content">
 				<h2>Прощальный аккорд: от лабиринтов базаров до танца чаек.</h2>
 				<div class="image-content">
-					<img src="/img/placeholder.jpg" data-src="/img/days_7/img_1.jpg" alt="День седьмой" loading="lazy"
-						class="lazy-image">
+					<img src="/img/placeholder.jpg" data-src="/img/days_7/img_1.jpg"
+						alt="Гранд-базар — своды и лабиринты улиц" class="lazy-image">
 				</div>
 				<p>Наступил день, когда чемоданы начали покорно наполняться сувенирами вместо вещей, а в воздухе витала
 					горьковатая сладость скорого прощания. Но Стамбул не отпускал просто так — он приготовил нам
@@ -804,7 +819,7 @@
 					каждый жест, улыбка и подобранное слово были частью танца, ведущего к заветным сувенирам.</p>
 
 				<p>Не в силах насытиться атмосферой, мы двинулись дальше, на Египетский базар, чьи стены, помнящие XVII
-					век, до сих пор пропитаны душой далеких странствий. На входе Среди золотистых гор специй, сладостей
+					век, до сих пор пропитаны душой далеких странствий. На входе среди золотистых гор специй, сладостей
 					и трав, у входа, на самом почётном месте, нас ждало
 					его неофициальное божество — величественный котик, восседавший на прилавке как живой талисман и
 					безмолвный хранитель вековых традиций. Пройдя немой «фейс-контроль» у его кошачьего величества, мы
@@ -827,90 +842,92 @@
 			<div class="media-gallery">
 				<div class="gallery-container">
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_0.1.jpg" alt="День седьмой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_0.1.jpg"
+							alt="Стамбул, день седьмой — фото 1" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_0.2.jpg" alt="День седьмой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_0.2.jpg"
+							alt="Стамбул, день седьмой — фото 2" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_0.3.jpg" alt="День седьмой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_0.3.jpg"
+							alt="Стамбул, день седьмой — фото 3" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_2.jpg" alt="День седьмой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_2.jpg"
+							alt="Стамбул, день седьмой — фото 4" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_3.jpg" alt="День седьмой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_3.jpg"
+							alt="Стамбул, день седьмой — фото 5" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_4.jpg" alt="День седьмой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_4.jpg"
+							alt="Стамбул, день седьмой — фото 6" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_5.jpg" alt="День седьмой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_5.jpg"
+							alt="Стамбул, день седьмой — фото 7" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_6.jpg" alt="День седьмой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_6.jpg"
+							alt="Стамбул, день седьмой — фото 8" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_7.jpg" alt="День седьмой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_7.jpg"
+							alt="Стамбул, день седьмой — фото 9" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_8.jpg" alt="День седьмой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_8.jpg"
+							alt="Стамбул, день седьмой — фото 10" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_9.jpg" alt="День седьмой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_9.jpg"
+							alt="Стамбул, день седьмой — фото 11" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_10.jpg" alt="День седьмой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_10.jpg"
+							alt="Стамбул, день седьмой — фото 12" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_11.jpg" alt="День седьмой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_11.jpg"
+							alt="Стамбул, день седьмой — фото 13" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_12.jpg" alt="День седьмой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_12.jpg"
+							alt="Стамбул, день седьмой — фото 14" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_13.jpg" alt="День седьмой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_13.jpg"
+							alt="Стамбул, день седьмой — фото 15" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_14.jpg" alt="День седьмой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_7/img_14.jpg"
+							alt="Стамбул, день седьмой — фото 16" class="lazy-image">
 					</div>
 
 					<div class="media-item">
-						<div class="youtube-poster" data-youtube-id="fyT-RQFU8ik">
-							<img src="/img/video-poster.jpg" alt="YouTube видео" class="lazy-image">
+						<div class="youtube-poster" data-youtube-id="Erg3dnV-A7Q">
+							<img src="https://img.youtube.com/vi/Erg3dnV-A7Q/hqdefault.jpg"
+								alt="Видео: седьмой день в Стамбуле" loading="lazy">
 							<div class="video-play-button">▶</div>
 						</div>
 					</div>
-
 				</div>
-				<button class="nav-button prev">‹</button>
-				<button class="nav-button next">›</button>
+				<button class="nav-button prev" aria-label="Предыдущие фото">‹</button>
+				<button class="nav-button next" aria-label="Следующие фото">›</button>
 			</div>
 		</section>
 
-		<!-- блок 8 -->
-		<section class="content-block">
+		<!-- ============================================================
+		     БЛОК 8 — День восьмой (без видео — день отъезда)
+		     ============================================================ -->
+		<section class="content-block" id="day-8">
 			<div class="text-content">
 				<h2>Дорога домой: "Пора родной, пора".</h2>
 				<div class="image-content">
-					<img src="/img/placeholder.jpg" data-src="/img/days_8/img_1.jpg" alt="День восьмой" loading="lazy"
-						class="lazy-image">
+					<img src="/img/placeholder.jpg" data-src="/img/days_8/img_1.jpg"
+						alt="Аэропорт Стамбула — обратный путь" class="lazy-image">
 				</div>
 				<p>Сумки, набитые до отказа воспоминаниями, были застегнуты. Мы позавтракали, в последний раз вдохнув
 					терпкий воздух Стамбула, и двинулись в путь. На входе в метро нас провожал молчаливый,
@@ -940,68 +957,70 @@
 				<p>Да, это был трудный, выматывающий обратный путь. Но, оглядываясь на всё пережитое, хотелось сказать
 					одно: оно того стоило. Ибо за всеми этими тяготами дороги сияла одна непреложная истина — неделя,
 					прожитая в объятиях древнего города на берегах Босфора.</p>
-
 			</div>
 			<div class="media-gallery">
 				<div class="gallery-container">
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_8/img_2.jpg" alt="День восьмой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_8/img_2.jpg"
+							alt="Стамбул, день восьмой — фото 2" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_8/img_3.jpg" alt="День восьмой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_8/img_3.jpg"
+							alt="Стамбул, день восьмой — фото 3" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_8/img_4.jpg" alt="День восьмой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_8/img_4.jpg"
+							alt="Стамбул, день восьмой — фото 4" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_8/img_5.jpg" alt="День восьмой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_8/img_5.jpg"
+							alt="Стамбул, день восьмой — фото 5" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_8/img_5.1.jpg" alt="День восьмой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_8/img_5.1.jpg"
+							alt="Стамбул, день восьмой — фото 6" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_8/img_6.jpg" alt="День восьмой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_8/img_6.jpg"
+							alt="Стамбул, день восьмой — фото 7" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_8/img_7.jpg" alt="День восьмой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_8/img_7.jpg"
+							alt="Стамбул, день восьмой — фото 8" class="lazy-image">
 					</div>
 					<div class="media-item">
-						<img src="/img/placeholder.jpg" data-src="/img/days_8/img_8.jpg" alt="День восьмой"
-							loading="lazy" class="lazy-image">
+						<img src="/img/placeholder.jpg" data-src="/img/days_8/img_8.jpg"
+							alt="Стамбул, день восьмой — фото 9" class="lazy-image">
 					</div>
 				</div>
-				<button class="nav-button prev">‹</button>
-				<button class="nav-button next">›</button>
+				<button class="nav-button prev" aria-label="Предыдущие фото">‹</button>
+				<button class="nav-button next" aria-label="Следующие фото">›</button>
 			</div>
 		</section>
 	</div>
 
-	<!-- Модальное окно для увеличенного просмотра -->
-	<div class="modal">
-		<span class="close">&times;</span>
-		<button class="modal-nav modal-prev">‹</button>
-		<button class="modal-nav modal-next">›</button>
-		<div class="modal-content">
-			<img src="" alt="" class="modal-media">
-			<video controls class="modal-media">
-				Ваш браузер не поддерживает видео.
-			</video>
-		</div>
+	<!-- ============================================================
+	     МОДАЛЬНОЕ ОКНО
+	     Содержимое .modal-content создаётся JS (modal.js) при открытии.
+	     Пустой контейнер — чтобы при закрытии не оставалось старых плееров.
+	     ============================================================ -->
+	<div class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+		<span class="close" aria-label="Закрыть">&times;</span>
+		<button class="modal-nav modal-prev" aria-label="Предыдущее">‹</button>
+		<button class="modal-nav modal-next" aria-label="Следующее">›</button>
+		<div class="modal-content"></div>
 	</div>
 
-	<!-- Контейнер для фоновой анимации -->
-	<div id="background-animation">
+	<!-- ============================================================
+	     ФОНОВАЯ АНИМАЦИЯ
+	     .sun-rays — градиентные пятна (base.css).
+	     Canvas с частицами создаёт particles.js внутри этого контейнера.
+	     ============================================================ -->
+	<div id="background-animation" aria-hidden="true">
 		<div class="sun-rays"></div>
 	</div>
 
-	<script src="/JS/script.js"></script>
+	<script type="module" src="/JS/main.js"></script>
 </body>
 
 </html>
