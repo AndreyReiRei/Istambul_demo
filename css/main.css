@@ -864,3 +864,161 @@ h1 {
 		display: none;
 	}
 }
+
+/* ----------------------------------------------------------------------------
+   13. ТУМБЛЕР ФОНОВЫХ ЭФФЕКТОВ
+   ----------------------------------------------------------------------------
+   Круглая кнопка в правом верхнем углу. Включает/выключает фоновые частицы.
+
+   Стиль: тёмное стекло + голубой акцент — единый с навигацией.
+   Состояния:
+     • aria-pressed="true"  — эффекты включены (иконка яркая, голубая);
+     • aria-pressed="false" — выключены (иконка приглушена, серая).
+   ---------------------------------------------------------------------------- */
+.effects-toggle {
+	position: fixed;
+	top: 20px;
+	right: 20px;
+	z-index: var(--z-modal-ctrl);
+	/* поверх контента, но под модалкой */
+
+	width: 52px;
+	height: 52px;
+	border-radius: 50%;
+	border: 1px solid rgba(255, 255, 255, 0.25);
+
+	/* Тёмное стекло */
+	background: rgba(15, 30, 50, 0.65);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+
+	color: #e8f4f8;
+	font-size: 22px;
+	line-height: 1;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	box-shadow:
+		0 4px 16px rgba(0, 0, 0, 0.4),
+		inset 0 1px 0 rgba(255, 255, 255, 0.1);
+	transition: opacity 0.25s ease, background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+
+	-webkit-tap-highlight-color: transparent;
+	user-select: none;
+}
+
+/* Включено — голубое свечение, иконка яркая */
+.effects-toggle[aria-pressed="true"] {
+	color: var(--color-accent);
+	border-color: rgba(133, 227, 255, 0.5);
+	box-shadow:
+		0 4px 16px rgba(0, 0, 0, 0.4),
+		0 0 20px rgba(133, 227, 255, 0.25),
+		inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* Выключено — иконка приглушена, серая */
+.effects-toggle[aria-pressed="false"] {
+	color: rgba(232, 244, 248, 0.4);
+	opacity: 0.7;
+}
+
+@media (hover: hover) {
+	.effects-toggle:hover {
+		background: rgba(30, 60, 90, 0.85);
+		transform: scale(1.08);
+		box-shadow:
+			0 6px 24px rgba(0, 0, 0, 0.5),
+			0 0 24px rgba(133, 227, 255, 0.3);
+	}
+}
+
+.effects-toggle:active {
+	transform: scale(0.95);
+}
+
+.effects-toggle:focus-visible {
+	outline: 2px solid var(--color-accent);
+	outline-offset: 3px;
+}
+
+/* Иконка ✦ — плавно поворачивается при переключении */
+.effects-toggle__icon {
+	display: inline-block;
+	transition: transform 0.4s ease;
+}
+
+.effects-toggle[aria-pressed="true"] .effects-toggle__icon {
+	transform: rotate(0deg);
+}
+
+.effects-toggle[aria-pressed="false"] .effects-toggle__icon {
+	transform: rotate(45deg) scale(0.85);
+}
+
+/* ----------------------------------------------------------------------------
+   ОТКЛЮЧЕНИЕ ФОНОВЫХ ЭФФЕКТОВ (тумблер)
+   ----------------------------------------------------------------------------
+   Класс .effects-off ставится на <html>, когда пользователь выключил
+   фоновые эффекты тумблером. Отключает:
+     • блики на карточках (sunBeamDiagonal, sunBeamHorizontal);
+     • анимацию «солнечных лучей» (.sun-rays).
+   Частицы отключаются отдельно — через particles.js (canvas).
+   ---------------------------------------------------------------------------- */
+.effects-off .content-block::before,
+.effects-off .content-block::after {
+	animation: none;
+	opacity: 0;
+}
+
+.effects-off .sun-rays {
+	animation: none;
+}
+
+/* На мобильных кнопка меньше, но удобная для пальца */
+@media (max-width: 599px) {
+	.effects-toggle {
+		top: 15px;
+		right: 15px;
+		width: 46px;
+		height: 46px;
+		font-size: 20px;
+	}
+}
+
+/* Печать — скрываем */
+@media print {
+	.effects-toggle {
+		display: none;
+	}
+}
+
+/* prefers-reduced-motion — без анимаций */
+@media (prefers-reduced-motion: reduce) {
+
+	.effects-toggle,
+	.effects-toggle__icon {
+		transition: none;
+	}
+}
+
+/* Иконка ✦ / ○ — плавно меняется */
+.effects-toggle__icon {
+	display: inline-block;
+	transition: transform 0.4s ease, opacity 0.3s ease;
+	font-size: 22px;
+}
+
+/* ON — иконка яркая, не повёрнута */
+.effects-toggle[aria-pressed="true"] .effects-toggle__icon {
+	transform: rotate(0deg);
+	opacity: 1;
+}
+
+/* OFF — иконка тусклая, чуть повёрнута */
+.effects-toggle[aria-pressed="false"] .effects-toggle__icon {
+	transform: rotate(-15deg);
+	opacity: 0.5;
+}
