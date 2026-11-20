@@ -3,11 +3,12 @@
  * ----------------------------------------------------------------------------
  * Модальное окно для фото, видео и YouTube.
  *
- * Восстановлено рабочее поведение YouTube-плеера:
- *   • iframe создаётся с параметрами, которые гарантированно работают;
- *   • добавлен referrerPolicy — без него YouTube часто возвращает Error 153;
- *   • сохранена кнопка «Нажмите для воспроизведения» (autoplay по клику);
- *   • closeModal корректно останавливает YouTube (iframe.src = '').
+ * Свайп:
+ *   • влево  → следующее медиа;
+ *   • вправо → предыдущее;
+ *   • порог 50px, чтобы случайный тап не листал;
+ *   • жесты по iframe YouTube игнорируются (плеер сам обрабатывает касания);
+ *   • вертикальный свайп не мешает листанию (определяем направление).
  *
  * Публичный API:
  *   initModal()                        — навесить слушатели (один раз)
@@ -17,7 +18,7 @@
  */
 
 // ---------------------------------------------------------------------------
-// Состояние (модульное, не глобальное)
+// Состояние
 // ---------------------------------------------------------------------------
 let currentGallery = null;
 let currentMediaIndex = 0;
@@ -68,6 +69,89 @@ export function initModal() {
 			navigate( 1 );
 		}
 	} );
+
+	// Свайп — навешиваем ОДИН раз на modalContentEl
+	setupSwipe();
+}
+
+// ---------------------------------------------------------------------------
+// Свайп в модалке
+// ---------------------------------------------------------------------------
+/**
+ * Ручной свайп для модалки.
+ *
+ * Почему не нативный scroll:
+ *   • в модалке один элемент, скроллить нечего;
+ *   • нужен порог, чтобы тап не листал;
+ *   • нужно игнорировать жесты по iframe YouTube (там свой обработчик).
+ *
+ * Логика:
+ *   1. touchstart — запоминаем точку и цель касания.
+ *   2. touchmove — определяем направление (горизонтальный/вертикальный).
+ *   3. touchend — если горизонтальный и > 50px — листаем.
+ */
+function setupSwipe() {
+	let startX = 0;
+	let startY = 0;
+	let isHorizontal = false;
+	let isSwiping = false;
+
+	const SWIPE_THRESHOLD = 50;      // минимальная длина свайпа в px
+	const DIRECTION_THRESHOLD = 10;  // минимальное движение для определения направления
+
+	modalContentEl.addEventListener( 'touchstart', ( e ) => {
+		// Если коснулись iframe YouTube — не вмешиваемся,
+		// плеер сам обрабатывает жесты
+		if ( e.target.closest( 'iframe' ) ) return;
+
+		const touch = e.touches[0];
+		startX = touch.clientX;
+		startY = touch.clientY;
+		isHorizontal = false;
+		isSwiping = false;
+	}, { passive: true } );
+
+	modalContentEl.addEventListener( 'touchmove', ( e ) => {
+		if ( e.target.closest( 'iframe' ) ) return;
+		if ( !startX && !startY ) return;
+
+		const touch = e.touches[0];
+		const dx = Math.abs( touch.clientX - startX );
+		const dy = Math.abs( touch.clientY - startY );
+
+		// Один раз определяем направление
+		if ( !isSwiping && ( dx > DIRECTION_THRESHOLD || dy > DIRECTION_THRESHOLD ) ) {
+			isSwiping = true;
+			isHorizontal = dx > dy;
+		}
+	}, { passive: true } );
+
+	modalContentEl.addEventListener( 'touchend', ( e ) => {
+		if ( e.target.closest( 'iframe' ) ) return;
+		if ( !isSwiping || !isHorizontal ) {
+			// Сброс — следующий жест начнётся «с нуля»
+			startX = 0;
+			startY = 0;
+			isSwiping = false;
+			isHorizontal = false;
+			return;
+		}
+
+		const touch = e.changedTouches[0];
+		const dx = touch.clientX - startX;
+
+		if ( dx > SWIPE_THRESHOLD ) {
+			navigate( -1 );  // свайп вправо → предыдущий
+		} else if ( dx < -SWIPE_THRESHOLD ) {
+			navigate( 1 );   // свайп влево → следующий
+		}
+
+		// Сброс
+		startX = 0;
+		startY = 0;
+		isSwiping = false;
+		isHorizontal = false;
+	}, { passive: true } );
 }
 
 // ---------------------------------------------------------------------------
@@ -106,10 +190,8 @@ function renderCurrentMedia() {
 	const item = items[currentMediaIndex];
 	if ( !item ) return;
 
-	// Очищаем предыдущий контент (и старый YouTube-iframe вместе с ним)
 	modalContentEl.innerHTML = '';
 
-	// --- YouTube ---
 	const youtubePoster = item.querySelector( '.youtube-poster' );
 	if ( youtubePoster ) {
 		const youtubeId = youtubePoster.getAttribute( 'data-youtube-id' );
@@ -119,7 +201,6 @@ function renderCurrentMedia() {
 		}
 	}
 
-	// --- Изображение или видео ---
 	const mediaEl = item.querySelector( 'img, video' );
 	if ( !mediaEl ) return;
 
@@ -130,21 +211,16 @@ function renderCurrentMedia() {
 	}
 }
 
-/**
- * Создать <img> для модалки.
- * Берём data-src (если картинка ещё не загружена лениво) или src.
- */
 function createImage( sourceImg ) {
 	const img = document.createElement( 'img' );
 	img.className = 'modal-media';
 	img.src = sourceImg.getAttribute( 'data-src' ) || sourceImg.src;
 	img.alt = sourceImg.alt || '';
+	// Отключаем перетаскивание — иначе свайп по фото «схватит» картинку
+	img.draggable = false;
 	return img;
 }
 
-/**
- * Создать <video> для модалки.
- */
 function createVideo( sourceVideo ) {
 	const video = document.createElement( 'video' );
 	video.className = 'modal-media';
@@ -162,17 +238,8 @@ function createVideo( sourceVideo ) {
 }
 
 /**
- * Создать блок с YouTube-плеером и оверлеем «Нажмите для воспроизведения».
- *
- * ВАЖНО: параметры iframe восстановлены до рабочего состояния:
- *   • rel=0               — не показывать «похожие видео» в конце;
- *   • enablejsapi=1       — разрешить управление через API;
- *   • origin              — обязательно для корректной работы API;
- *   • referrerPolicy      — без него YouTube часто возвращает Error 153;
- *   • allow               — разрешения для автоплея и фуллскрина.
- *
- * Autoplay не включаем сразу — сначала показываем оверлей,
- * по клику перезагружаем iframe с autoplay=1.
+ * YouTube-плеер с оверлеем «Нажмите для воспроизведения».
+ * referrerPolicy обязателен — без него YouTube отдаёт Error 153.
  */
 function createYouTube( youtubeId ) {
 	const wrap = document.createElement( 'div' );
@@ -181,7 +248,6 @@ function createYouTube( youtubeId ) {
 	const iframe = document.createElement( 'iframe' );
 	iframe.className = 'youtube-iframe';
 
-	// Параметры, которые работали в исходной версии
 	const params = new URLSearchParams( {
 		rel: '0',
 		enablejsapi: '1',
@@ -191,13 +257,10 @@ function createYouTube( youtubeId ) {
 	iframe.src = `https://www.youtube.com/embed/${youtubeId}?${params.toString()}`;
 	iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
 	iframe.allowFullscreen = true;
-
-	// Ключевое: без этого YouTube может отдавать Error 153
 	iframe.referrerPolicy = 'strict-origin-when-cross-origin';
 
 	wrap.appendChild( iframe );
 
-	// Оверлей с кнопкой ▶
 	const overlay = document.createElement( 'div' );
 	overlay.className = 'youtube-play-overlay';
 	overlay.innerHTML = `
@@ -207,7 +270,6 @@ function createYouTube( youtubeId ) {
 		</div>`;
 
 	overlay.addEventListener( 'click', () => {
-		// Перезагружаем iframe с autoplay=1
 		const autoplayParams = new URLSearchParams( {
 			autoplay: '1',
 			rel: '0',
@@ -233,7 +295,6 @@ function navigate( direction ) {
 	if ( total === 0 ) return;
 
 	currentMediaIndex = ( currentMediaIndex + direction + total ) % total;
-
 	renderCurrentMedia();
 	updateNavButtons( total );
 }
@@ -251,36 +312,26 @@ function updateNavButtons( total ) {
 // ---------------------------------------------------------------------------
 // Закрытие
 // ---------------------------------------------------------------------------
-/**
- * Закрыть модалку: остановить всё воспроизведение, очистить DOM,
- * вернуть скролл странице, снять паузу с частиц.
- */
 function closeModal() {
 	if ( !modalEl || !modalContentEl ) return;
 
-	// 1. Останавливаем <video>
 	modalContentEl.querySelectorAll( 'video' ).forEach( ( v ) => {
 		v.pause();
 		v.currentTime = 0;
 	} );
 
-	// 2. Останавливаем YouTube — очистка src гарантированно убивает плеер
 	const iframe = modalContentEl.querySelector( 'iframe' );
 	if ( iframe ) iframe.src = '';
 
-	// 3. Полная очистка контента
 	modalContentEl.innerHTML = '';
 
-	// 4. Сброс состояния
 	currentGallery = null;
 	currentMediaIndex = 0;
 
-	// 5. Скрыть и вернуть скролл
 	modalEl.style.display = 'none';
 	modalEl.setAttribute( 'aria-hidden', 'true' );
 	document.body.style.overflow = '';
 
-	// 6. Возобновляем частицы
 	particlesController?.start();
 }
 
